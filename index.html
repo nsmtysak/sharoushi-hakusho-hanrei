@@ -1,0 +1,813 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#2B3F8F">
+<style>
+:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0;font-size:14px}
+img{max-width:100%}
+[hidden]{display:none!important}
+</style>
+<title>白書・判例ドリル</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
+<style>
+/* レイアウト：スマホ1カラム。上に章見出し、下に固定タブ。判決文・白書本文は明朝で「原文らしく」、操作系はゴシック。 */
+:root{
+  --bg:#F3F4F7; --paper:#FFFFFF; --ink:#1A2132; --sub:#5A6378; --line:#DADDE6;
+  --accent:#2B3F8F; --accent-soft:#E6EAF6; --seal:#B5332B; --seal-soft:#F8E6E4;
+  --ok:#2C7A57; --ok-soft:#E2F2EA; --warn:#9A6A00; --warn-soft:#FBF1D9;
+  --f-body:"Zen Kaku Gothic New","Hiragino Sans","Yu Gothic UI","Meiryo",sans-serif;
+  --f-text:"Shippori Mincho","Hiragino Mincho ProN","Yu Mincho",serif;
+  --tab-h:62px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#11141B; --paper:#1A1F2A; --ink:#E7E9F0; --sub:#9AA2B5; --line:#2D3445;
+  --accent:#93A6F2; --accent-soft:#232C47; --seal:#E8746A; --seal-soft:#3A2424;
+  --ok:#62C595; --ok-soft:#1C3329; --warn:#E3B54F; --warn-soft:#3A3020; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#11141B; --paper:#1A1F2A; --ink:#E7E9F0; --sub:#9AA2B5; --line:#2D3445;
+  --accent:#93A6F2; --accent-soft:#232C47; --seal:#E8746A; --seal-soft:#3A2424;
+  --ok:#62C595; --ok-soft:#1C3329; --warn:#E3B54F; --warn-soft:#3A3020; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.7;-webkit-text-size-adjust:100%}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.wrap{max-width:560px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:12px calc(var(--tab-h) + 28px + env(safe-area-inset-bottom,0px))}
+h1,h2,h3{text-wrap:balance;margin:0;line-height:1.35}
+h1{font-size:21px;font-weight:700}
+h2{font-size:17px;font-weight:700}
+h3{font-size:15px;font-weight:700}
+p{margin:0}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.stack{display:flex;flex-direction:column;gap:14px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.eyebrow{font-size:11.5px;letter-spacing:.08em;color:var(--sub);font-weight:700}
+.muted{color:var(--sub);font-size:13px}
+.panel{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:16px}
+.btn{border:1px solid var(--line);background:var(--paper);border-radius:10px;padding:10px 14px;font-weight:700;font-size:14px}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--paper)}
+.btn.block{width:100%;padding:13px}
+.btn.ghost{background:transparent}
+.chip{display:inline-flex;align-items:center;gap:4px;font-size:11.5px;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--accent-soft);color:var(--accent);white-space:nowrap}
+.chip.seal{background:var(--seal-soft);color:var(--seal)}
+.chip.ok{background:var(--ok-soft);color:var(--ok)}
+.chip.warn{background:var(--warn-soft);color:var(--warn)}
+
+/* 上部 */
+.top{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;padding-bottom:12px;border-bottom:1px solid var(--line);margin-bottom:16px}
+.top .yr{font-family:var(--f-text);font-size:12.5px;color:var(--sub)}
+
+/* カウントダウン */
+.count{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:center}
+.count .num{font-family:var(--f-text);font-size:44px;font-weight:700;line-height:1;color:var(--accent);font-variant-numeric:tabular-nums}
+.count .num small{font-size:16px;margin-left:2px}
+.meter{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.meter div{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:10px;text-align:center}
+.meter b{display:block;font-size:20px;font-variant-numeric:tabular-nums}
+.meter span{font-size:11.5px;color:var(--sub)}
+
+/* 戦略 */
+details.guide{background:var(--paper);border:1px solid var(--line);border-radius:12px}
+details.guide summary{list-style:none;padding:14px 16px;font-weight:700;display:flex;justify-content:space-between;gap:10px}
+details.guide summary::-webkit-details-marker{display:none}
+details.guide summary::after{content:"＋";color:var(--sub)}
+details.guide[open] summary::after{content:"－"}
+details.guide .body{padding:0 16px 16px;display:flex;flex-direction:column;gap:10px;font-size:14px}
+.guide ol,.guide ul{margin:0;padding-left:1.3em;display:flex;flex-direction:column;gap:6px}
+.timeline{display:flex;flex-direction:column;gap:0}
+.timeline .t{display:grid;grid-template-columns:86px 1fr;gap:10px;padding:10px 0;border-top:1px dashed var(--line)}
+.timeline .t:first-child{border-top:0}
+.timeline .when{font-weight:700;font-size:13px;color:var(--accent)}
+.timeline .now .when::after{content:"いまここ";display:block;font-size:10.5px;color:var(--seal)}
+
+/* 一覧 */
+.list{display:flex;flex-direction:column;gap:8px}
+.item{display:grid;grid-template-columns:1fr auto;gap:4px 10px;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:12px 14px;text-align:left;width:100%}
+.item .t{font-weight:700;min-width:0}
+.item .m{grid-column:1/-1;font-size:12.5px;color:var(--sub)}
+.box{font-size:11px;font-weight:700;color:var(--sub);font-variant-numeric:tabular-nums}
+.dots{display:inline-flex;gap:3px;vertical-align:middle}
+.dots i{width:7px;height:7px;border-radius:50%;background:var(--line);display:block}
+.dots i.on{background:var(--ok)}
+
+/* 本文（判決文・白書文） */
+.passage{font-family:var(--f-text);font-size:16.5px;line-height:2.05;letter-spacing:.01em}
+.passage .lbl{font-family:var(--f-body);font-size:12px;color:var(--sub);display:block;margin-bottom:4px}
+.blank{display:inline;border:0;border-bottom:2px solid var(--accent);background:var(--accent-soft);color:var(--accent);font-family:var(--f-body);font-weight:700;font-size:14.5px;padding:1px 8px;margin:0 2px;border-radius:4px 4px 0 0;line-height:1.6}
+.blank.active{background:var(--accent);color:var(--paper)}
+.blank.right{background:var(--ok-soft);color:var(--ok);border-color:var(--ok)}
+.blank.wrong{background:var(--seal-soft);color:var(--seal);border-color:var(--seal)}
+.blank .fix{display:block;font-size:11.5px;font-weight:700}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.opt{border:1px solid var(--line);background:var(--paper);border-radius:10px;padding:11px 10px;font-weight:500;font-size:14px;text-align:left;line-height:1.45;min-width:0;overflow-wrap:anywhere}
+.opt.right{border-color:var(--ok);background:var(--ok-soft);color:var(--ok);font-weight:700}
+.opt.wrong{border-color:var(--seal);background:var(--seal-soft);color:var(--seal)}
+.opt:disabled{cursor:default}
+.gogun{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.gogun .opt{padding:8px 8px;font-size:13.5px}
+.gogun .opt b{color:var(--sub);margin-right:4px;font-variant-numeric:tabular-nums}
+.gogun .opt.used{opacity:.45}
+.point{border-left:3px solid var(--accent);padding:4px 0 4px 12px;font-size:14px}
+.result{display:flex;align-items:baseline;gap:10px}
+.result .score{font-family:var(--f-text);font-size:40px;font-weight:700;font-variant-numeric:tabular-nums}
+.stamp{display:inline-block;border:2px solid var(--seal);color:var(--seal);border-radius:6px;padding:0 8px;font-weight:700;transform:rotate(-4deg);font-size:14px}
+.stamp.ok{border-color:var(--ok);color:var(--ok)}
+.dir{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.dir .opt{text-align:center;font-weight:700;font-size:15px}
+.seg{display:flex;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:3px;gap:3px}
+.seg button{flex:1;border:0;background:transparent;border-radius:8px;padding:8px 4px;font-size:13px;font-weight:700;color:var(--sub)}
+.seg button.on{background:var(--accent);color:var(--paper)}
+
+/* フォーム */
+label.f{display:flex;flex-direction:column;gap:4px;font-size:13px;font-weight:700}
+input[type=text],textarea,select{font:inherit;font-weight:400;font-size:16px;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:10px;width:100%}
+textarea{min-height:110px;resize:vertical;line-height:1.6}
+.note{background:var(--warn-soft);color:var(--ink);border-radius:10px;padding:10px 12px;font-size:13px}
+
+/* 過去問分析 */
+.bar{display:flex;gap:2px;border-radius:8px;overflow:hidden;font-size:12px;font-weight:700}
+.bar span{padding:6px 6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;text-align:center}
+.b-seal{background:var(--seal-soft);color:var(--seal)}.b-warn{background:var(--warn-soft);color:var(--warn)}
+.b-ok{background:var(--ok-soft);color:var(--ok)}.b-acc{background:var(--accent-soft);color:var(--accent)}
+.ul{margin:0;padding-left:1.3em;display:flex;flex-direction:column;gap:8px;font-size:14px}
+.kq{display:flex;flex-direction:column;gap:6px}
+.kr{display:grid;grid-template-columns:18px auto 1fr;gap:8px;align-items:start;font-size:13.5px}
+.kr .chip{margin-top:2px}.kt{min-width:0;overflow-wrap:anywhere}
+.tbl{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:13.5px;font-variant-numeric:tabular-nums}
+th,td{border-bottom:1px solid var(--line);padding:7px 6px;text-align:left;white-space:nowrap}
+th{font-size:12px;color:var(--sub)}
+.opt b{color:var(--sub);margin-right:2px}
+
+/* タブ */
+nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--paper);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px);padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px)}
+nav.tabs .in{max-width:560px;margin:0 auto;display:grid;grid-template-columns:repeat(6,1fr);height:var(--tab-h)}
+nav.tabs button{border:0;background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:11px;font-weight:700;color:var(--sub)}
+nav.tabs button .ic{font-family:var(--f-text);font-size:19px;line-height:1}
+nav.tabs button.on{color:var(--accent)}
+nav.tabs button.on .ic{color:var(--accent)}
+.toast{position:fixed;left:50%;bottom:calc(var(--tab-h) + 16px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:8px 16px;border-radius:999px;font-size:13px;font-weight:700;z-index:30}
+@media (prefers-reduced-motion:no-preference){.opt,.blank,.btn{transition:background-color .15s,border-color .15s}}
+</style>
+
+<div class="wrap" id="app">
+  <header class="top">
+    <div>
+      <div class="eyebrow">社労士 一般常識 選択式対策</div>
+      <h1>白書・判例ドリル</h1>
+    </div>
+    <div class="yr">2027年度<br>（第59回）向け</div>
+  </header>
+  <main id="main"></main>
+</div>
+<nav class="tabs" aria-label="画面切替"><div class="in" id="tabs"></div></nav>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+/* ===== データ =====
+   本文中の {{正解|ダミー|ダミー|ダミー}} が穴になる。
+   判例は判旨の要点（受験用に要約。判決原文は裁判所HPで確認）。
+   統計は2026年10月22日時点で公表済みの最新値（主に2025年値）。src に出典を持つ。 */
+const CASES = [
+ /* ---- 労働組合法：R6・R7・R8と3年連続で選択式に出た分野。2027年も最優先 ---- */
+ {id:"c12",type:"case",prio:"S",exam:"R8選択 労一C・D",title:"朝日放送事件",meta:"最三小判 平7.2.28｜労組法7条の「使用者」",
+  text:"一般に使用者とは労働契約上の雇用主をいうものであるが、労働組合法7条が団結権の侵害に当たる一定の行為を不当労働行為として排除、是正して{{正常な労使関係を回復する|企業秩序の維持を確保する|労働三権を実質的に保障する|労働条件の対等決定を実現する}}ことを目的としていることにかんがみると、雇用主以外の事業主であっても、雇用主から労働者の派遣を受けて自己の業務に従事させ、その労働者の基本的な労働条件等について、雇用主と{{部分的|全面的|実質的|一時的}}とはいえ同視できる程度に{{現実的かつ具体的に支配、決定することができる|経営上の関心を持たざるを得ない|当事者として直接的に関与することを求められる|影響力を有して協議に参加する}}地位にある場合には、その限りにおいて、当該事業主は同条の「使用者」に当たる。",
+  point:"令和8年の本試験で、目的部分（C）と「現実的かつ具体的に支配、決定」（D）の2か所が空欄になった。目的部分まで覚えている受験生は少なく、差がついた。"},
+ {id:"c21",type:"case",prio:"S",exam:"R7選択 労一D・E",title:"オリエンタルモーター事件",meta:"最二小判 平7.9.8｜食堂の使用拒否と不当労働行為",
+  text:"組合が会社の許可なく食堂を使用し続けたことは、会社の{{施設管理|人事管理|労務指揮|業務命令}}権を無視するものであり、正当な組合活動に当たらない。条件が折り合わないまま会社が食堂の使用を許諾しない状態が続いていることをもって、会社の権利の濫用であると認めるべき特段の事情があるとはいえず、{{組合の弱体化を図ろうとしたもの|組合に対する報復を目的としたもの|組合員を差別的に取り扱ったもの|組合の運営に介入したもの}}であるとも断じ得ないから、食堂使用の拒否は不当労働行為に当たらない。",
+  point:"施設利用を拒んでも、権利濫用の特段の事情や組合弱体化の意図がなければ不当労働行為にならない。国鉄札幌運転区事件と同じ考え方。"},
+ {id:"c22",type:"case",prio:"S",exam:"R6選択 労一C・D",title:"朝日火災海上保険（高田）事件",meta:"最三小判 平8.3.26｜労働協約の一般的拘束力",
+  text:"労働組合法17条により、一の工場事業場の4分の3以上の数の労働者が一の労働協約の適用を受けるに至ったときは、他の同種労働者に対しても労働協約の{{規範|債務|拘束|直律}}的効力が及ぶ。協約上の基準が一部の点で未組織の同種労働者の労働条件より不利益とみられる場合であっても、そのことだけで不利益部分の効力が及ばないと解するのは相当でない。ただし、当該労働協約を特定の未組織労働者に適用することが{{著しく不合理である|客観的に合理的な理由を欠く|労働協約の目的を逸脱する|社会通念上相当でない}}と認められる特段の事情があるときは、その効力を当該労働者に及ぼすことはできない。",
+  point:"労組法17条（一般的拘束力・4分の3以上）とセット。原則は不利益でも及ぶ、例外は「著しく不合理」。"},
+ {id:"c23",type:"case",prio:"A",exam:"",title:"国鉄札幌運転区事件",meta:"最三小判 昭54.10.30｜企業施設を使った組合活動",
+  text:"労働組合又はその組合員が、使用者の所有し管理する物的施設であって定立された企業秩序のもとに事業の運営の用に供されているものを、使用者の{{許諾|指示|命令|黙認}}を得ることなく組合活動のために利用することは許されない。その利用を許さないことが使用者の{{権利の濫用|不当労働行為|信義則違反|公序良俗違反}}であると認められるような特段の事情がある場合を除いては、当該物的施設を管理利用する使用者の権限を侵し、{{企業秩序|職場規律|労使関係|業務運営}}を乱すものであって、正当な組合活動として許容されるものではない。",
+  point:"令和7年に出たオリエンタルモーター事件の土台となった判例。施設利用は「許諾」が原則。"},
+ {id:"c24",type:"case",prio:"A",exam:"",title:"三井倉庫港運事件",meta:"最一小判 平元.12.14｜ユニオン・ショップ協定の効力",
+  text:"ユニオン・ショップ協定のうち、締結組合以外の{{他の労働組合|使用者の利益代表者の組織|従業員親睦団体|産業別労働組合}}に加入している者及び締結組合から脱退し又は除名されたが、他の労働組合に加入し又は新たな労働組合を結成した者について使用者の解雇義務を定める部分は、民法{{90条|1条|415条|709条}}の規定により無効である。",
+  point:"労働者の組合選択の自由と、他組合の団結権を侵害する部分は公序違反で無効。"},
+ {id:"c25",type:"case",prio:"A",exam:"",title:"東芝労働組合小向支部事件",meta:"最二小判 平19.2.2｜組合脱退の自由",
+  text:"労働組合から脱退する権利を行使しないことを労働者に義務付けて、脱退の効力そのものを生じさせないとする合意部分は、{{脱退の自由|団結の自由|結社の自由|職業選択の自由}}という重要な権利を奪い、組合の統制への{{永続的な服従|一時的な服従|事実上の協力|包括的な同意}}を強いるものであるから、公序良俗に反し、無効である。",
+  point:"労組法系の判例が3年続いたので、組合と組合員の関係を扱う判例も押さえておく。"},
+
+ /* ---- 労働契約：R4・R5に出た分野 ---- */
+ {id:"c26",type:"case",prio:"S",exam:"R5選択 労一A・B",title:"大日本印刷事件",meta:"最二小判 昭54.7.20｜採用内定",
+  text:"採用内定通知のほかには労働契約締結のための特段の意思表示をすることが予定されていなかったことを考慮すると、採用内定により、就労の始期を大学卒業直後とし、それまでの間、誓約書記載の採用内定取消事由に基づく{{解約権を留保|試用期間を設定|労働条件を保留|研修義務を付加}}した労働契約が成立したと解するのが相当である。採用内定の取消事由は、採用内定当時{{知ることができず、また知ることが期待できないような|すでに判明していた|当事者が予見していた|容易に調査し得た}}事実であって、これを理由として採用内定を取り消すことが解約権留保の趣旨、目的に照らして客観的に合理的と認められ社会通念上相当として是認することができるものに限られる。",
+  point:"「始期付解約権留保付労働契約」。内定取消の基準は「知ることができず、また知ることが期待できないような事実」。"},
+ {id:"c27",type:"case",prio:"S",exam:"R4選択 労一D・E",title:"日立メディコ事件",meta:"最一小判 昭61.12.4｜有期契約の雇止め",
+  text:"5回にわたり契約が更新されていた臨時員の雇用関係は、ある程度の{{継続が期待されていた|終身雇用が予定されていた|更新が約束されていた|正社員への転換が予定されていた}}ものであり、このような労働者を契約期間満了によって雇止めにするに当たっては、{{解雇に関する法理|就業規則の不利益変更法理|試用期間の法理|配転命令の法理}}が類推される。雇止めが無効とされる場合には、期間満了後における使用者と労働者間の法律関係は、{{従前の労働契約が更新された|期間の定めのない契約に転換された|新たな労働契約が締結された|労働契約が終了した}}のと同様の法律関係となる。",
+  point:"現在の労働契約法19条（雇止め法理）の元になった判例。条文と判旨の両方から出る。"},
+ {id:"c01",type:"case",prio:"A",exam:"",title:"秋北バス事件",meta:"最大判 昭43.12.25｜就業規則の不利益変更",
+  text:"新たな就業規則の作成又は変更によって労働者に不利益な労働条件を一方的に課することは原則として許されないが、労働条件の{{集合的|個別的|一時的|恒常的}}処理、特にその統一的かつ画一的な決定を建前とする就業規則の性質からいって、当該規則条項が{{合理的|適法|必要|相当}}なものであるかぎり、個々の労働者において、これに{{同意|異議|署名|承認}}しないことを理由として、その適用を拒否することは許されない。",
+  point:"労働契約法10条の源流。「合理的なものであるかぎり」「同意しないことを理由として適用を拒否できない」がセットで出る。"},
+ {id:"c02",type:"case",prio:"B",exam:"",title:"第四銀行事件",meta:"最二小判 平9.2.28｜就業規則変更の合理性",
+  text:"就業規則の変更の合理性は、変更によって労働者が被る{{不利益の程度|精神的苦痛|経済的損失|生活上の影響}}、使用者側の変更の必要性の内容・程度、変更後の就業規則の内容自体の相当性、{{代償措置|経過措置|救済措置|激変緩和措置}}その他関連する他の労働条件の改善状況、{{労働組合等との交渉の経緯|行政機関の指導|同業他社の動向|株主の意向}}、他の労働組合又は他の従業員の対応、同種事項に関する我が国社会における一般的状況等を{{総合考慮|個別に考慮|比較衡量|厳格に審査}}して判断すべきである。",
+  point:"合理性の判断要素の列挙。労契法10条の「労働組合等との交渉の状況」と並べて覚える。"},
+ {id:"c03",type:"case",prio:"B",exam:"",title:"三菱樹脂事件",meta:"最大判 昭48.12.12｜採用の自由",
+  text:"企業者は、経済活動の一環としてする{{契約締結の自由|営業の自由|職業選択の自由|結社の自由}}を有し、いかなる者を雇い入れるか、いかなる条件でこれを雇うかについて、法律その他による特別の制限がない限り、原則として{{自由|慎重}}にこれを決定することができる。企業者が特定の{{思想、信条|国籍、人種|性別、年齢|学歴、職歴}}を有する者をそのゆえをもって雇い入れることを拒んでも、それを当然に違法とすることはできない。",
+  point:"採用の自由。労基法3条は「雇入れ後」の差別を禁止するもので、雇入れそのものは制限しない。"},
+ {id:"c04",type:"case",prio:"A",exam:"",title:"高知放送事件",meta:"最二小判 昭52.1.31｜普通解雇と解雇権濫用",
+  text:"普通解雇事由がある場合においても、使用者は常に解雇しうるものではなく、当該具体的な事情のもとにおいて、解雇に処することが{{著しく不合理|やや不合理|違法|不公平}}であり、{{社会通念上|客観的に|信義則上|法律上}}相当なものとして是認することができないときには、当該解雇の意思表示は、{{解雇権の濫用|公序良俗違反|不当労働行為|信義則違反}}として無効になる。",
+  point:"労契法16条「客観的に合理的な理由を欠き、社会通念上相当であると認められない」の判例上の出発点。"},
+ {id:"c05",type:"case",prio:"A",exam:"R4選択 労基B・C",title:"東亜ペイント事件",meta:"最二小判 昭61.7.14｜転勤命令",
+  text:"業務上の必要性が存しない場合又は存する場合であっても、{{他の不当な動機・目的|業務外の事情|労働者の同意がない|手続上の瑕疵}}をもってなされたものであるとき若しくは労働者に対し{{通常甘受すべき程度|社会通念上許容される程度|受忍限度|合理的な範囲}}を著しく超える不利益を負わせるものであるとき等、特段の事情の存する場合でなければ、当該転勤命令は権利の濫用になるものではない。業務上の必要性は、{{余人をもっては容易に替え難い|業務の継続に不可欠である|経営上やむを得ない|緊急かつ重大である}}といった高度の必要性に限定することは相当でない。",
+  point:"令和4年の労基法の選択式で出題。一般常識でも出る判例は、科目をまたいで繰り返し使われる。"},
+ {id:"c06",type:"case",prio:"A",exam:"R6選択 労基B",title:"三菱重工業長崎造船所事件",meta:"最一小判 平12.3.9｜労働時間の概念",
+  text:"労働基準法上の労働時間とは、労働者が使用者の{{指揮命令下|管理監督下|業務命令下|支配下}}に置かれている時間をいい、これに該当するか否かは、労働者の行為が使用者の指揮命令下に置かれたものと評価することができるか否かにより{{客観的|主観的|形式的|画一的}}に定まるものであって、労働契約、就業規則、{{労働協約|労使慣行|労使協定|労働者の同意}}等の定めのいかんにより決定されるべきものではない。",
+  point:"令和6年の労基法の選択式で出題。「客観的に定まる」も狙われやすい。"},
+ {id:"c07",type:"case",prio:"B",exam:"R5選択 労基C",title:"大星ビル管理事件",meta:"最一小判 平14.2.28｜仮眠時間",
+  text:"不活動仮眠時間であっても、{{労働からの解放|休憩の自由利用|場所的な拘束の解除|自由な外出}}が保障されていない場合には労働基準法上の労働時間に当たる。仮眠室における待機と警報や電話等に対して直ちに相当の対応をすることを義務付けられていたときは、実作業への従事が{{皆無に等しい|相当程度ある|恒常的である|予定されている}}など実質的に義務付けがされていないと認めることができるような事情がない限り、労働時間に当たる。",
+  point:"「労働からの解放」は令和5年の労基法の選択式で、大林ファシリティーズ事件の空欄として出た語でもある。"},
+ {id:"c28",type:"case",prio:"A",exam:"R6選択 労基C",title:"シンガー・ソーイング・メシーン事件",meta:"最二小判 昭48.1.19｜退職金債権の放棄",
+  text:"退職金債権を放棄する旨の意思表示は、賃金全額払の原則の趣旨に照らし、それが労働者の{{自由な意思|真意|合理的な判断|明示的な承諾}}に基づくものであると認めるに足りる合理的な理由が{{客観的|主観的|形式的|相当程度}}に存在するときは、有効である。",
+  point:"「自由な意思」は山梨県民信用組合事件、広島中央保健生協事件にも出てくる決まり文句。"},
+ {id:"c08",type:"case",prio:"A",exam:"",title:"電通事件",meta:"最二小判 平12.3.24｜過労自殺と安全配慮",
+  text:"使用者は、その雇用する労働者に従事させる業務を定めてこれを管理するに際し、業務の遂行に伴う{{疲労や心理的負荷|危険や有害物質|長時間の拘束|過重な責任}}等が過度に蓄積して労働者の{{心身の健康|生命及び身体|職業生活|家庭生活}}を損なうことがないよう注意する義務を負う。",
+  point:"精神障害の労災認定が過去最多という統計とセットで、白書の文脈でも使われやすい。"},
+ {id:"c09",type:"case",prio:"B",exam:"",title:"神戸弘陵学園事件",meta:"最三小判 平2.6.5｜契約期間か試用期間か",
+  text:"雇用契約に期間を設けた趣旨・目的が労働者の{{適性|能力|勤務態度|健康状態}}を評価・判断するためのものであるときは、期間の満了により雇用契約が当然に終了する旨の{{明確な合意|口頭の約束|就業規則の定め|労使慣行}}が成立しているなどの特段の事情が認められる場合を除き、その期間は契約の存続期間ではなく、{{試用期間|研修期間|見習期間|有期契約期間}}であると解するのが相当である。",
+  point:"有期契約の形でも、目的が適性判断なら「試用期間」。採用内定（大日本印刷事件）と並べて覚える。"},
+ {id:"c10",type:"case",prio:"A",exam:"",title:"山梨県民信用組合事件",meta:"最二小判 平28.2.19｜不利益変更への同意",
+  text:"賃金や退職金に関する労働条件の変更に対する労働者の同意の有無については、変更を受け入れる旨の行為の有無だけでなく、不利益の内容及び程度、行為に至った経緯及び態様、行為に先立つ労働者への{{情報提供又は説明|書面の交付|意見の聴取|代償の提示}}の内容等に照らして、当該行為が労働者の{{自由な意思|真意|合理的な判断|明示的な承諾}}に基づいてされたものと認めるに足りる合理的な理由が{{客観的|主観的|形式的|相当程度}}に存在するか否かという観点からも判断されるべきである。",
+  point:"「自由な意思」「合理的な理由が客観的に存在」の決まり文句。"},
+ {id:"c11",type:"case",prio:"B",exam:"",title:"フジ興産事件",meta:"最二小判 平15.10.10｜懲戒の根拠",
+  text:"使用者が労働者を懲戒するには、あらかじめ就業規則において{{懲戒の種別及び事由|懲戒の手続及び時期|懲戒権者及び範囲|懲戒の基準及び程度}}を定めておくことを要する。そして、就業規則が法的規範としての拘束力を生ずるためには、その内容を適用を受ける事業場の労働者に{{周知|届出|説明|交付}}させる手続が採られていることを要する。",
+  point:"「種別及び事由」と「周知」の2語が穴埋めで狙われやすい。"},
+ {id:"c13",type:"case",prio:"B",exam:"",title:"日立製作所武蔵工場事件",meta:"最一小判 平3.11.28｜時間外労働義務",
+  text:"使用者が{{36協定|就業規則|労働協約|労働契約}}を締結し、所轄労働基準監督署長に届け出た場合において、就業規則に当該協定の範囲内で時間外労働をさせることができる旨を定めているときは、当該就業規則の規定の内容が{{合理的|適法|明確|相当}}なものである限り、それが具体的労働契約の内容をなすから、労働者はその定めるところに従い、時間外労働をする義務を負う。",
+  point:"36協定だけでは義務は生じない（免罰効果）。就業規則の合理的な定めがあって初めて契約上の義務になる。"},
+ {id:"c14",type:"case",prio:"B",exam:"",title:"横浜南労基署長（旭紙業）事件",meta:"最一小判 平8.11.28｜労働者性",
+  text:"自己所有のトラックを持ち込んで運送業務に従事していた運転手について、会社は業務の性質上当然に必要とされる指示をしていた以外には、業務の遂行に関し特段の{{指揮監督|安全配慮|人事評価|業務指示}}を行っていたとはいえず、時間的、場所的な{{拘束の程度|管理の程度|自由度|裁量の範囲}}も一般の従業員と比較してはるかに緩やかであったことから、労働基準法上の{{労働者|事業者|使用者|請負人}}に該当せず、労災保険法上の労働者にも該当しない。",
+  point:"労働者性は「指揮監督下の労働」と「報酬の労務対償性」で判断する。"},
+ {id:"c15",type:"case",prio:"A",exam:"",title:"長澤運輸事件",meta:"最二小判 平30.6.1｜定年後再雇用と待遇差",
+  text:"有期契約労働者が定年退職後に再雇用された者であることは、労働条件の相違が不合理と認められるか否かの判断において、旧労働契約法20条にいう「{{その他の事情|職務の内容|配置の変更の範囲|業務の必要性}}」として考慮される。また、不合理か否かの判断は、賃金の総額を比較することのみによるのではなく、{{賃金項目の趣旨|賃金総額の水準|業界の相場|労使交渉の結果}}を個別に考慮すべきである。",
+  point:"現在のパート・有期法8条（不合理な待遇の禁止）へ引き継がれた考え方。"},
+ {id:"c16",type:"case",prio:"A",exam:"",title:"名古屋自動車学校事件",meta:"最一小判 令5.7.20｜再雇用後の基本給",
+  text:"正職員と定年後再雇用の嘱託職員との基本給の相違が不合理と認められるか否かを判断するに当たっては、基本給の{{性質及び支給の目的|金額及び支給の方法|算定基準及び時期|総額及び比率}}を踏まえ、労使交渉に関する事情についても、その{{具体的な経緯|最終的な結果|形式的な手続|労働者の人数}}をも勘案すべきである。",
+  point:"新しい最高裁判例はまだ選択式で使われていないものが多く、今後の出題候補。"},
+ {id:"c17",type:"case",prio:"A",exam:"",title:"滋賀県社会福祉協議会事件",meta:"最二小判 令6.4.26｜職種限定合意と配置転換",
+  text:"労働者と使用者との間に当該労働者の{{職種や業務内容|勤務地や勤務時間|賃金や退職金|職位や役職}}を特定のものに限定する旨の合意がある場合には、使用者は、当該労働者に対し、その{{個別的同意|包括的同意|労働組合の同意|過半数代表者の同意}}なしに当該合意に反する{{配置転換|出向|降格|懲戒処分}}を命ずる権限を有しない。",
+  point:"東亜ペイント事件（職種限定なし→配転命令は原則有効）との対比で覚える。"},
+ {id:"c18",type:"case",prio:"B",exam:"",title:"協同組合グローブ事件",meta:"最三小判 令6.4.16｜事業場外みなし",
+  text:"「労働時間を算定し難いとき」に当たるか否かは、業務の性質、内容やその遂行の態様、状況等、使用者と労働者との間で業務に関する{{指示及び報告|連絡及び相談|命令及び承認|記録及び管理}}がされているときは、その方法、内容やその実施の態様、状況等を{{総合|個別に|厳格に|形式的に}}して判断すべきである。原審は、業務日報による報告の{{正確性|提出頻度|記載量|承認手続}}について十分に検討していない。",
+  point:"労基法38条の2。令和8年の労基法の選択式では、条文の「労働時間を算定し難い」が空欄になった。"},
+ {id:"c19",type:"case",prio:"B",exam:"",title:"広島中央保健生協事件",meta:"最一小判 平26.10.23｜妊娠中の軽易業務転換と降格",
+  text:"妊娠中の軽易業務への転換を契機として降格させる措置は、原則として男女雇用機会均等法{{9条3項|6条|5条|11条}}の禁止する取扱いに当たる。ただし、労働者が{{自由な意思|真意|合理的な判断|明示的な承諾}}に基づいて降格を承諾したものと認めるに足りる合理的な理由が客観的に存在するとき等は、この限りでない。",
+  point:"均等法9条は令和6年の選択式で4項（1年以内の解雇は無効）が出ている。条文と判例をセットで押さえる。"},
+ {id:"c20",type:"case",prio:"B",exam:"",title:"国・人事院（経産省職員）事件",meta:"最三小判 令5.7.11｜性自認とトイレ使用制限",
+  text:"性同一性障害である職員に執務階から離れた階の女性トイレの使用のみを認めた処遇について、人事院の判定は、他の職員に対する配慮を過度に重視し、当該職員の{{不利益|意向|健康|権利}}を不当に軽視するものであって、{{著しく妥当性を欠いた|手続上の瑕疵がある|法令に違反する|裁量の範囲内にある}}ものといわざるを得ない。",
+  point:"職場の多様性の文脈で白書と結び付けて出る可能性がある。"},
+
+ /* ---- 条文（労一の法令枠：毎年1空欄。規模要件・期間の数字が狙われる） ---- */
+ {id:"l01",type:"law",prio:"S",exam:"R8選択 労一E",title:"育児・介護休業法 22条の2",meta:"育児休業取得状況の公表（2025年4月から対象拡大）",
+  text:"常時雇用する労働者の数が{{300人|50人|100人|1,000人}}を超える事業主は、厚生労働省令で定めるところにより、毎年少なくとも{{1回|2回|4回|12回}}、その雇用する労働者の育児休業の取得の状況として厚生労働省令で定めるものを公表しなければならない。",
+  point:"2025年4月に「1,000人超」から「300人超」へ広がった改正点がそのまま出た。改正で数字が変わった条文は狙われる。"},
+ {id:"l02",type:"law",prio:"S",exam:"R7選択 労一C",title:"労働施策総合推進法 30条の2",meta:"パワーハラスメント防止措置",
+  text:"事業主は、職場において行われる優越的な関係を背景とした言動であって、{{業務上必要かつ相当な範囲を超えたもの|客観的に合理的な理由を欠くもの|社会通念上相当でないもの|通常甘受すべき程度を著しく超えるもの}}によりその雇用する労働者の{{就業環境|健康状態|職業生活|労働条件}}が害されることのないよう、当該労働者からの相談に応じ、適切に対応するために必要な体制の整備その他の雇用管理上必要な措置を講じなければならない。",
+  point:"パワハラの3要素（優越的な関係、業務上必要かつ相当な範囲を超える、就業環境が害される）。カスハラ対策の義務化（2025年改正）も押さえる。"},
+ {id:"l03",type:"law",prio:"S",exam:"R6選択 労一E",title:"男女雇用機会均等法 9条4項",meta:"妊娠中・出産後の解雇",
+  text:"妊娠中の女性労働者及び出産後{{1年|30日|8週間|6か月}}を経過しない女性労働者に対してなされた解雇は、無効とする。ただし、事業主が当該解雇が前項に規定する事由を理由とする解雇でないことを{{証明|疎明|説明|主張}}したときは、この限りでない。",
+  point:"労基法19条の解雇制限（産後30日）と混同させる選択肢が並ぶ。"},
+ {id:"l04",type:"law",prio:"S",exam:"",title:"女性活躍推進法（2026年4月施行の改正）",meta:"情報公表義務の拡大",
+  text:"2026年4月から、常時雇用する労働者が{{101人以上|51人以上|301人以上|1,001人以上}}の事業主に、男女の賃金の差異と{{女性管理職比率|女性の採用比率|女性の育児休業取得率|女性の平均勤続年数}}の公表が義務付けられた。あわせて法律の有効期限は{{2036年|2031年|2046年|2026年}}3月31日まで延長された。",
+  point:"令和8年は育介法の「300人」が出た。2027年は、施行されたばかりの女活法の「101人以上」が狙われやすい。"},
+ {id:"l05",type:"law",prio:"S",exam:"R4選択 労一A・B（旧率）",title:"障害者雇用促進法（法定雇用率）",meta:"2026年7月から引上げ",
+  text:"民間企業の法定雇用率は2024年4月から2.5％、2026年7月から{{2.7|2.6|2.8|3.0}}％に引き上げられた。これに伴い、障害者を雇用しなければならない事業主の範囲は従業員{{37.5人|40.0人|43.5人|45.5人}}以上に広がる。",
+  point:"令和4年は当時の法定雇用率（2.3％）と対象規模が出た。2027年は引き上げ後の2.7％が狙われる。"},
+
+ /* ---- 社一の目的条文（R6国保・高確、R7介保・高確、R8確拠と3年連続） ---- */
+ {id:"l11",type:"law",prio:"S",exam:"R8選択 社一D・E",title:"確定拠出年金法 1条",meta:"目的",
+  text:"この法律は、少子高齢化の進展、{{高齢期の生活の多様化|高齢期の価値観の多様化|就業形態の変化|産業構造の変化}}等の社会経済情勢の変化にかんがみ、個人又は事業主が拠出した資金を個人が自己の責任において運用の指図を行い、高齢期においてその結果に基づいた給付を受けることができるようにするため、確定拠出年金について必要な事項を定め、国民の高齢期における所得の確保に係る{{自主的な努力|自助的な活動|事前的な準備|積極的な取組み}}を支援し、もって公的年金の給付と相まって国民の生活の安定と福祉の向上に寄与することを目的とする。",
+  point:"確定給付企業年金法1条との違いは「高齢期の生活の多様化」（確拠）と「産業構造の変化」（確給）。"},
+ {id:"l12",type:"law",prio:"S",exam:"",title:"確定給付企業年金法 1条",meta:"目的（2027年の最有力候補）",
+  text:"この法律は、少子高齢化の進展、{{産業構造の変化|高齢期の生活の多様化|就業形態の変化|雇用の流動化}}等の社会経済情勢の変化にかんがみ、事業主が従業員と{{給付の内容|掛金の額|運用の方法|拠出の時期}}を約し、高齢期において従業員がその内容に基づいた給付を受けることができるようにするため、確定給付企業年金について必要な事項を定め、国民の高齢期における所得の確保に係る{{自主的な努力|自助的な活動|事前的な準備|積極的な取組み}}を支援し、もって公的年金の給付と相まって国民の生活の安定と福祉の向上に寄与することを目的とする。",
+  point:"企業年金（確給・確拠）は令和3〜8年の6年間で5回出ている。確拠の目的条文が出た翌年なので、確給の目的条文の可能性が高い。"},
+ {id:"l13",type:"law",prio:"A",exam:"R6選択 社一C",title:"国民健康保険法 1条",meta:"目的",
+  text:"この法律は、国民健康保険事業の{{健全な運営|安定的な財政|適正な実施|円滑な実施}}を確保し、もって{{社会保障及び国民保健の向上|社会保険及び国民福祉の向上|社会保障及び国民福祉の向上|社会保険及び国民保健の向上}}に寄与することを目的とする。",
+  point:"令和6年は「社会保障／社会保険」と「保健／福祉」の組合せ4択で出た。"},
+ {id:"l14",type:"law",prio:"A",exam:"R6選択 社一D・E",title:"高齢者医療確保法 1条",meta:"目的",
+  text:"この法律は、国民の高齢期における適切な医療の確保を図るため、医療費の適正化を推進するための計画の作成及び保険者による健康診査等の実施に関する措置を講ずるとともに、高齢者の医療について、国民の{{共同連帯|自助と共助|自助と連帯|共助連帯}}の理念等に基づき、前期高齢者に係る保険者間の{{費用負担|給付費用|負担割合|給付割合}}の調整、後期高齢者に対する適切な医療の給付等を行うために必要な制度を設け、もって国民保健の向上及び高齢者の福祉の増進を図ることを目的とする。",
+  point:"高確法は令和5〜7年に3年連続で出た（20条・1条・4条）。"},
+ {id:"l15",type:"law",prio:"S",exam:"",title:"介護保険法 1条",meta:"目的",
+  text:"この法律は、加齢に伴って生ずる心身の変化に起因する疾病等により要介護状態となった者等について、これらの者が{{尊厳|生活の質|自己決定|社会参加}}を保持し、その有する能力に応じ{{自立した日常生活|健康で文化的な生活|安定した家庭生活|充実した社会生活}}を営むことができるよう、必要な保健医療サービス及び福祉サービスに係る給付を行うため、国民の{{共同連帯|自助と共助|相互扶助|社会連帯}}の理念に基づき介護保険制度を設け、もって国民の保健医療の向上及び福祉の増進を図ることを目的とする。",
+  point:"令和7年は介護保険法2条（医療との連携）が出た。令和8年版厚生労働白書のテーマも医療・介護の現場なので、介護保険の条文は出やすい。"},
+ {id:"l16",type:"law",prio:"A",exam:"R7選択 社一C",title:"介護保険法 2条2項",meta:"保険給付の基本",
+  text:"保険給付は、要介護状態等の軽減又は悪化の防止に資するよう行われるとともに、{{医療との連携|事業者又は施設との連携|被保険者の心身の状況|家族の介護負担}}に十分配慮して行われなければならない。",
+  point:"2条には「被保険者の心身の状況」（4項）、「被保険者の選択」（3項）もあり、まぎらわしい選択肢になる。"},
+ {id:"l17",type:"law",prio:"A",exam:"R7選択 社一B",title:"高齢者医療確保法 4条1項",meta:"地方公共団体の責務",
+  text:"{{地方公共団体|国|保険者|後期高齢者医療広域連合}}は、この法律の趣旨を尊重し、住民の高齢期における医療に要する費用の適正化を図るための取組及び高齢者医療制度の運営が適切かつ円滑に行われるよう所要の施策を実施しなければならない。",
+  point:"国（3条）・地方公共団体（4条）・保険者（5条）の責務の区別。「住民」とあれば地方公共団体。"},
+ {id:"l18",type:"law",prio:"A",exam:"",title:"児童手当法 1条",meta:"目的（児童手当法は令和3〜5年に3年連続で出題）",
+  text:"この法律は、子ども・子育て支援の適切な実施を図るため、父母その他の保護者が子育てについての{{第一義的責任|最終的責任|共同責任|主たる責任}}を有するという基本的認識の下に、児童を養育している者に児童手当を支給することにより、家庭等における{{生活の安定|経済的負担の軽減|福祉の増進|子育ての支援}}に寄与するとともに、次代の社会を担う児童の{{健やかな成長|健全な育成|心身の発達|自立}}に資することを目的とする。",
+  point:"2024年10月の拡充（所得制限の撤廃、高校生年代まで延長、第3子以降3万円）は択一で狙われる。"},
+ {id:"l19",type:"law",prio:"B",exam:"",title:"社会保険労務士法 1条",meta:"社会保険労務士の使命（2025年改正で「目的」から改められた）",
+  text:"社会保険労務士は、労働及び社会保険に関する法令の円滑な実施を通じて適切な労務管理の確立及び{{個人の尊厳|労働者の権利|職業生活の安定|個人の能力}}が保持された適正な労働環境の形成に寄与することにより、事業の健全な発達と労働者等の福祉の向上並びに社会保障の向上及び増進に資し、もって豊かな国民生活及び活力ある経済社会の実現に資することを{{使命|目的|責務|職責}}とする。",
+  point:"2025年の改正で、1条が「目的」から「使命」の規定に改められた。令和8年は択一で社労士法1条が出ている。"},
+ {id:"l20",type:"law",prio:"A",exam:"R8選択 社一A・B",title:"日本国憲法 25条",meta:"令和7年版厚生労働白書からの出題",
+  text:"日本国憲法第{{25|13|14|27}}条は、「すべて国民は、健康で文化的な最低限度の生活を営む権利を有する」「国は、すべての生活部面について、社会福祉、社会保障及び公衆衛生の向上及び増進に努めなければならない」と定めており、いわゆる「{{生存権|幸福追求権|平等権|勤労権}}」を規定している。",
+  point:"社一は厚生労働白書の総論部分から、憲法のような「常識」が問われることがある。"}
+];
+
+const STATS = [
+ {id:"s01",type:"stat",title:"完全失業率",meta:"労働力調査｜2025年平均（2026年1月公表）",trend:"横ばい",src:"https://www.stat.go.jp/data/roudou/sokuhou/nen/ft/pdf/youyaku.pdf",
+  text:"2025年平均の完全失業率は{{2.5|2.0|3.0|3.5}}％で、前年と{{同率|比べ0.1ポイント上昇|比べ0.1ポイント低下|比べ0.5ポイント低下}}であった。完全失業者数は176万人で前年と同数である。",
+  point:"2%台半ばで横ばい。「上昇した」「3%を超えた」は誤りの選択肢として出やすい。"},
+ {id:"s02",type:"stat",title:"有効求人倍率",meta:"一般職業紹介状況｜2025年平均（2026年1月公表）",trend:"低下",src:"https://www.jil.go.jp/kokunai/blt/backnumber/2026/04/c_01.html",
+  text:"2025年平均の有効求人倍率は{{1.22|1.02|1.42|1.62}}倍で、前年（1.25倍）を{{下回った|上回った}}。",
+  point:"1倍を超えているので人手不足は続くが、数値は3年連続で低下。水準と方向を分けて覚える。"},
+ {id:"s03",type:"stat",title:"労働力人口",meta:"労働力調査｜2025年平均",trend:"上昇",src:"https://www.stat.go.jp/data/roudou/sokuhou/nen/ft/pdf/youyaku.pdf",
+  text:"2025年平均の労働力人口は{{7004万人|6004万人|7504万人|6504万人}}で、前年に比べ47万人{{増加|減少}}した。就業者数は6828万人で5年連続の増加である。",
+  point:"総人口は減っているのに、労働力人口と就業者数は増えている。女性と高齢者の労働参加が理由で、白書の定番の論点。"},
+ {id:"s04",type:"stat",title:"非正規雇用の割合",meta:"労働力調査（詳細集計）｜2025年平均",trend:"低下",src:"https://www.stat.go.jp/data/roudou/sokuhou/nen/dt/pdf/youyaku.pdf",
+  text:"2025年平均の非正規の職員・従業員は{{2128万人|1128万人|3128万人|1628万人}}で、役員を除く雇用者に占める割合は{{36.5|26.5|46.5|31.5}}％である。非正規を選んだ理由は「{{自分の都合のよい時間に働きたいから|正規の職員・従業員の仕事がないから|家計の補助・学費等を得たいから|専門的な技能等をいかせるから}}」が最も多い。",
+  point:"割合は「4割弱」。人数は増えているが割合は前年（36.8%）から低下。非正規を選んだ理由の1位も穴になりやすい。"},
+ {id:"s05",type:"stat",title:"労働組合推定組織率",meta:"労働組合基礎調査｜2025年6月30日（2025年12月公表）",trend:"低下",src:"https://www.mhlw.go.jp/toukei/itiran/roudou/roushi/kiso/25/dl/gaikyou.pdf",
+  text:"2025年の推定組織率は{{16.0|21.0|11.0|26.0}}％で、{{過去最低|過去最高}}を更新した。一方、パートタイム労働者の組合員数は{{149万4千人|49万4千人|249万4千人|99万4千人}}で過去最高である。",
+  point:"組合員数は増えたが、雇用者数がもっと増えたので組織率は下がった。パートの推定組織率は8.8%で前年と同じ。"},
+ {id:"s06",type:"stat",title:"年次有給休暇の取得率",meta:"就労条件総合調査｜令和7年調査（2024年実績・2025年12月公表）",trend:"上昇",src:"https://www.mhlw.go.jp/toukei/itiran/roudou/jikan/syurou/25/index.html",
+  text:"労働者1人平均の年次有給休暇の取得率は{{66.9|56.9|76.9|46.9}}％で、昭和59年以降{{過去最高|過去最低}}となった。付与日数は18.1日、取得日数は{{12.1|10.1|14.1|8.1}}日である。",
+  point:"政府目標は2028年までに70%以上。目標値と年も穴になりうる。"},
+ {id:"s07",type:"stat",title:"男性の育児休業取得率",meta:"雇用均等基本調査｜令和7年度（2026年7月公表）",trend:"上昇",src:"https://www.mhlw.go.jp/toukei/list/71-r07.html",
+  text:"令和7年度の男性の育児休業取得率は{{50.9|40.9|30.9|60.9}}％で、初めて{{5割|4割|3割|6割}}を超えた。女性は{{88.3|78.3|98.3|68.3}}％である。",
+  point:"前年度40.5%から10.4ポイント上昇。政府目標は2025年50%、2030年85%。2027年試験で最も狙われやすい数値の一つ。"},
+ {id:"s08",type:"stat",title:"合計特殊出生率",meta:"人口動態統計｜2025年（2026年6月公表）",trend:"低下",src:"https://www.mhlw.go.jp/toukei/saikin/hw/jinkou/geppo/nengai25/dl/gaikyouR7.pdf",
+  text:"2025年の合計特殊出生率は{{1.14|1.24|1.34|1.04}}で、{{過去最低|過去最高}}を更新した。東京都は3年連続で{{1|1.2|0.8|1.1}}を下回った。",
+  point:"10年連続の低下。最も高いのは沖縄県（1.52）、最も低いのは東京都（0.96）。"},
+ {id:"s09",type:"stat",title:"出生数",meta:"人口動態統計｜2025年（2026年6月公表）",trend:"低下",src:"https://www.mhlw.go.jp/toukei/saikin/hw/jinkou/geppo/nengai25/dl/gaikyouR7.pdf",
+  text:"2025年の出生数は約{{67万1千人|77万1千人|57万1千人|87万1千人}}で、10年連続で過去最少となった。婚姻数は{{48万9千組|38万9千組|58万9千組|68万9千組}}、自然増減は約91万8千人の減少である。",
+  point:"減少率は△2.2%で、近年の5%台より鈍化した。2024年は68万6千人で初めて70万人を割った。"},
+ {id:"s10",type:"stat",title:"高齢化率",meta:"人口推計｜2025年10月1日（令和8年版高齢社会白書）",trend:"上昇",src:"https://www8.cao.go.jp/kourei/whitepaper/w-2026/html/zenbun/s1_1_1.html",
+  text:"65歳以上人口は約3,622万人で、総人口に占める割合（高齢化率）は{{29.4|25.4|33.4|21.4}}％となった。75歳以上人口の割合は{{17.3|12.1|22.3|9.8}}％である。",
+  point:"約3割。75歳以上（17.3%）が65〜74歳（12.1%）を上回る。高齢社会白書の冒頭データ。"},
+ {id:"s11",type:"stat",title:"最低賃金（全国加重平均）",meta:"地域別最低賃金｜2026年度（2026年10月以降に順次発効）",trend:"上昇",src:"https://www.jil.go.jp/kokunai/blt/backnumber/2026/10/special_03.html",
+  text:"2026年度の地域別最低賃金の全国加重平均額は{{1,177円|1,121円|1,055円|1,250円}}で、引上げ額は{{56円|66円|51円|43円}}であった。これは前年度の66円に次ぐ過去{{2番目|最大|3番目}}の引上げ額である。",
+  point:"2024年度1,055円 → 2025年度1,121円（+66円・過去最大） → 2026年度1,177円（+56円）。33府県が目安を上回った。"},
+ {id:"s12",type:"stat",title:"春季賃上げ率",meta:"連合 最終回答集計｜2026年（2026年7月公表）",trend:"低下",src:"https://jtuc-rengo.or.jp/activity/roudou/shuntou/2026/yokyu_kaito/kaito/press_no7.pdf",
+  text:"2026年の春季生活闘争の賃上げ率（定昇相当込み）は{{5.01|4.01|6.01|3.01}}％で、{{3年連続|2年連続|4年連続|初めて}}の5％台となった。中小組合（300人未満）は4.69％で、率は前年を上回った。",
+  point:"2024年5.10% → 2025年5.25% → 2026年5.01%。全体は前年より低いが、中小は前年を上回った。"},
+ {id:"s13",type:"stat",title:"一般労働者の賃金",meta:"賃金構造基本統計調査｜令和7年（2026年3月公表）",trend:"上昇",src:"https://www.mhlw.go.jp/toukei/itiran/roudou/chingin/kouzou/z2025/index.html",
+  text:"令和7年の一般労働者の賃金（月額）は{{34万600円|29万600円|39万600円|31万600円}}で過去最高。男女間賃金格差（男性=100）は{{76.6|66.6|86.6|71.6}}で、比較可能な昭和51年以降で格差が最も{{縮小|拡大}}した。",
+  point:"前年は33万400円・格差75.8。格差は縮小傾向だが、まだ7割台後半。"},
+ {id:"s14",type:"stat",title:"外国人労働者数",meta:"外国人雇用状況の届出状況｜2025年10月末（2026年1月公表）",trend:"上昇",src:"https://jsite.mhlw.go.jp/okinawa-roudoukyoku/content/contents/002546174.pdf",
+  text:"外国人労働者数は{{257万1,037人|157万1,037人|357万1,037人|207万1,037人}}で、前年比11.7％増と、届出が義務化された2007年以降{{過去最多|過去最少}}を更新した。",
+  point:"2024年は230万人。1年で約27万人増えた。2027年4月からは技能実習に代わる育成就労制度が始まる。"},
+ {id:"s15",type:"stat",title:"障害者の実雇用率",meta:"障害者雇用状況の集計結果｜2025年6月1日（2025年12月公表）",trend:"横ばい",src:"https://www.mhlw.go.jp/stf/newpage_67490.html",
+  text:"民間企業の雇用障害者数は{{70万4,610人|50万4,610人|90万4,610人|60万4,610人}}で過去最高、実雇用率は{{2.41|2.21|2.61|1.91}}％である。法定雇用率は2.5％で、2026年7月からは{{2.7|2.6|2.8|3.0}}％に引き上げられる。",
+  point:"実雇用率は前年と同じ2.41%（小数第3位では上昇）。法定雇用率を達成した企業の割合は46.0%。"},
+ {id:"s16",type:"stat",title:"70歳までの就業確保措置",meta:"高年齢者雇用状況等報告｜2025年6月1日（2025年12月公表）",trend:"上昇",src:"https://www.psrn.jp/topics/detail.php?id=39253",
+  text:"70歳までの高年齢者就業確保措置を実施済みの企業は{{34.8|14.8|54.8|74.8}}％で、前年から2.9ポイント{{増加|減少}}した。",
+  point:"65歳までの雇用確保措置は義務でほぼ全社が実施。70歳までは努力義務なので3割台にとどまる。"},
+ {id:"s17",type:"stat",title:"労働災害",meta:"労働災害発生状況｜2025年（2026年5月公表）",trend:"低下",src:"https://www.mhlw.go.jp/stf/newpage_73382.html",
+  text:"2025年の労働災害による死亡者数は{{700人|900人|500人|1,100人}}で{{過去最少|過去最多}}となった。休業4日以上の死傷者数は135,333人で、職場での熱中症による死傷者は{{1,803人|803人|2,803人|303人}}と統計開始以来最多となった。",
+  point:"死亡は減少、死傷者は13万人台で横ばい、熱中症は急増（前年比約43%増）。この3つの対比で出る。"},
+ {id:"s18",type:"stat",title:"精神障害の労災支給決定件数",meta:"過労死等の労災補償状況｜令和7年度（2026年7月公表）",trend:"上昇",src:"https://www.mhlw.go.jp/stf/newpage_74476.html",
+  text:"令和7年度の精神障害に関する労災の支給決定件数は{{1,082件|582件|2,082件|282件}}で{{過去最多|過去最少}}となった。出来事別では「{{上司等からのパワーハラスメント|顧客等からの著しい迷惑行為|仕事内容・仕事量の大きな変化|セクシュアルハラスメント}}」が最も多い。",
+  point:"請求件数4,958件も過去最多。2位はカスハラとセクハラ（各127件）。"},
+ {id:"s19",type:"stat",title:"平均寿命",meta:"簡易生命表｜2025年（2026年7月公表）",trend:"上昇",src:"https://www.mhlw.go.jp/toukei/saikin/hw/life/life25/dl/life25-14.pdf",
+  text:"2025年の平均寿命は男性{{81.35|79.35|83.35|85.35}}年、女性{{87.33|85.33|89.33|91.33}}年で、男女とも前年を{{上回った|下回った}}。",
+  point:"前年は男81.09年・女87.13年。男女差は5.98年に縮小。女性は国際比較で第1位。"},
+ {id:"s20",type:"stat",title:"厚生労働白書のテーマ",meta:"厚生労働白書｜令和8年版（2026年9月29日公表）",trend:"",src:"https://www.mhlw.go.jp/stf/wp/hakusyo/kousei/26/index.html",
+  text:"令和8年版厚生労働白書の第1部のテーマは「これからの{{医療・介護・福祉|雇用・労働|子ども・子育て|年金・医療}}の現場で働くことを考える」である。前年の令和7年版は「次世代の主役となる{{若者|高齢者|女性|子ども}}の皆さんへ」をテーマとした。",
+  point:"令和8年版は、2040年を見据え、ICT・AI・ロボットなどで現場の生産性を上げる取組みが中心。2027年試験の本命。"},
+ {id:"s21",type:"stat",title:"労働経済白書のテーマ",meta:"労働経済の分析｜令和8年版（2026年9月29日公表）",trend:"",src:"https://www.mhlw.go.jp/stf/newpage_75700.html",
+  text:"令和8年版労働経済の分析のテーマは「{{AI等技術革新|人口減少|物価上昇|働き方改革}}が進む中での労働市場の現状と課題」である。AIの影響は職種によって異なる可能性があり、論理的思考力や批判的思考力などの「{{メタスキル|ソフトスキル|デジタルスキル|ポータブルスキル}}」の重要性が高まる可能性があるとしている。前年の令和7年版のテーマは「{{労働力供給制約|持続的な賃上げ|人手不足|多様な働き方}}の下での持続的な経済成長に向けて」である。",
+  point:"第Ⅰ部は2025年の雇用・賃金の動き、第Ⅱ部はAIと労働市場・人材育成。厚生労働白書と同じくAI・生産性がキーワード。"}
+];
+
+/* 社一の統計（R4〜R8は毎年1〜2空欄が社会保障統計の数値。4択の選択肢は等間隔に並ぶ） */
+STATS.push(
+ {id:"s22",type:"stat",title:"国民年金の全額免除・猶予割合",meta:"厚生年金保険・国民年金事業の概況｜令和6年度末（2025年12月公表）",trend:"",src:"https://www.sharosi-siken.or.jp/results/",
+  text:"令和6年度末の国民年金保険料の全額免除・猶予者数は592万人で、第1号被保険者（任意加入を除く）に占める割合は{{44.0|4.0|24.0|64.0}}％である。",
+  point:"令和8年の社一で出た数値。第1号被保険者のおよそ4割強が全額免除・猶予。"},
+ {id:"s23",type:"stat",title:"国民年金保険料の現年度納付率",meta:"国民年金の加入・保険料納付状況｜令和7年度分（2026年7月公表）",trend:"上昇",src:"https://isvd.or.jp/columns/national-pension-payment-rate-shrinking-denominator",
+  text:"令和7年度分の国民年金保険料の現年度納付率は{{79.56|59.56|69.56|89.56}}％で、前年度から1.00ポイント上昇した。平成23年度分の58.6％を底に、{{14年連続|5年連続|10年連続|初めて}}の上昇である。",
+  point:"令和7年の社一では最終納付率（83.1％）が出た。国民年金の数値は令和7・8年と2年連続で出ている。率の上昇は分母（納付対象月数）の減少も一因。"},
+ {id:"s24",type:"stat",title:"社会保障給付費",meta:"社会保障費用統計｜令和6年度（2026年7月公表）",trend:"上昇",src:"https://www.ipss.go.jp/ss-cost/j/fsss-R06/fsss_R06.html",
+  text:"令和6年度の社会保障給付費の総額は{{138兆3,019億円|98兆3,019億円|118兆3,019億円|158兆3,019億円}}で、3年ぶりに増加した。部門別では「{{年金|医療|福祉その他|介護}}」が57兆8,528億円で最も大きい。",
+  point:"対GDP比は21.53％で3年連続の低下。部門別の順位（年金＞医療＞福祉その他）は必ず押さえる。"},
+ {id:"s25",type:"stat",title:"介護保険の認定者数・給付費",meta:"介護保険事業状況報告（年報）｜令和6年度",trend:"上昇",src:"https://www.kaiketsu-j.com/?p=23797",
+  text:"令和7年3月末の要介護（要支援）認定者数は{{721万人|521万人|921万人|321万人}}で、令和6年度の介護給付費は{{11兆1,826億円|7兆1,826億円|15兆1,826億円|3兆1,826億円}}と過去最高を更新した。",
+  point:"令和6年の社一では第1号被保険者に占める認定者の割合（18.9％）が出た。第1号被保険者数は3,584万人。"},
+ {id:"s26",type:"stat",title:"公的年金だけで暮らす高齢者世帯",meta:"国民生活基礎調査｜2024年調査（2025年7月公表）",trend:"",src:"https://limo.media/articles/-/90063",
+  text:"公的年金・恩給を受給している高齢者世帯のうち、公的年金・恩給の総所得に占める割合が{{100％|80〜100％未満|60〜80％未満|40〜60％未満}}の世帯は43.4％である。",
+  point:"令和6年の社一は2022年調査（44.0％）から同じ形で出た。2025年調査（2026年7月公表）の値は報道によって数字が違うので、厚生労働省の概況で確かめてからカードに追加する。"}
+);
+
+/* 既存の統計カードに、過去の出題実績と2027年の優先度を付ける */
+const TAGS={
+ s15:{prio:"S",exam:"R8選択 労一A"}, s13:{prio:"S",exam:"R8選択 労一B"}, s07:{prio:"S",exam:"R2選択（調査名）・R8択一"},
+ s01:{prio:"A",exam:"R2選択（調査名）"}, s03:{prio:"A",exam:""}, s04:{prio:"A",exam:""}, s06:{prio:"A",exam:"R2選択（調査名）"},
+ s05:{prio:"A",exam:""}, s02:{prio:"B",exam:""}, s08:{prio:"A",exam:""}, s09:{prio:"B",exam:""}, s10:{prio:"A",exam:""},
+ s11:{prio:"A",exam:""}, s12:{prio:"B",exam:""}, s14:{prio:"A",exam:""}, s16:{prio:"A",exam:"R3選択（高齢者雇用）"},
+ s17:{prio:"B",exam:""}, s18:{prio:"A",exam:""}, s19:{prio:"B",exam:""}, s20:{prio:"S",exam:"R6・R8選択（前年版の白書）"}, s21:{prio:"A",exam:""},
+ s22:{prio:"S",exam:"R8選択 社一C"}, s23:{prio:"S",exam:"R7選択 社一A（最終納付率）"}, s24:{prio:"A",exam:""}, s25:{prio:"A",exam:"R6選択 社一B（認定率）"}, s26:{prio:"A",exam:"R6選択 社一A"}
+};
+STATS.forEach(s=>Object.assign(s,TAGS[s.id]||{}));
+
+/* 過去の選択式（労一・社一）の出題元。試験センターの公表問題・正答と、予備校の解答速報で確認 */
+const KAKO=[
+ {y:"R8",yr:"2026",ro:[["A","2.41％","統計","障害者雇用状況の集計結果（令和7年）"],["B","76.6","統計","賃金構造基本統計調査（令和7年）男女間賃金格差"],["C","正常な労使関係を回復する","判例","朝日放送事件（労組法7条の使用者）"],["D","現実的かつ具体的に支配、決定することができる","判例","朝日放送事件"],["E","300人","法令","育児・介護休業法22条の2（取得状況の公表）"]],
+  sha:[["A","25","白書","令和7年版厚生労働白書（憲法25条）"],["B","生存権","白書","令和7年版厚生労働白書"],["C","44.0","統計","国民年金事業の概況（全額免除・猶予割合）"],["D","高齢期の生活の多様化","法令","確定拠出年金法1条"],["E","自主的な努力","法令","確定拠出年金法1条"]]},
+ {y:"R7",yr:"2025",ro:[["A","医療、福祉","統計","統計からみた我が国の高齢者（労働力調査）"],["B","農業、林業","統計","同上（65歳以上の就業者の割合が最も高い産業）"],["C","業務上必要かつ相当な範囲を超えたもの","法令","労働施策総合推進法30条の2（パワハラ）"],["D","施設管理","判例","オリエンタルモーター事件"],["E","組合の弱体化を図ろうとしたもの","判例","オリエンタルモーター事件"]],
+  sha:[["A","83.1","統計","国民年金の加入・保険料納付状況（最終納付率）"],["B","地方公共団体","法令","高齢者医療確保法4条"],["C","医療との連携","法令","介護保険法2条"],["D","責任準備金の額","法令","確定給付企業年金法60条"],["E","資産所得倍増プラン","白書","令和6年版厚生労働白書"]]},
+ {y:"R6",yr:"2024",ro:[["A","拘束時間、休息期間","白書","改善基準告示（令和5年版厚生労働白書）"],["B","45.8％","統計","労働力調査（雇用者に占める女性の割合）"],["C","規範","判例","朝日火災海上保険（高田）事件"],["D","著しく不合理である","判例","朝日火災海上保険（高田）事件"],["E","1年","法令","男女雇用機会均等法9条4項"]],
+  sha:[["A","100％","統計","国民生活基礎調査（公的年金のみの世帯）"],["B","18.9","統計","介護保険事業状況報告（認定率）"],["C","社会保障及び国民保健の向上","法令","国民健康保険法1条"],["D","共同連帯","法令","高齢者医療確保法1条"],["E","費用負担","法令","高齢者医療確保法1条"]]},
+ {y:"R5",yr:"2023",ro:[["A","採用内定通知のほかには…特段の意思表示をすることが予定されていなかった","判例","大日本印刷事件"],["B","知ることができず、また知ることが期待できないような事実","判例","大日本印刷事件"],["C","3","法令","労働者派遣法35条の3"],["D","労働基準法","法令","労働基準法120条（通達）"],["E","都道府県労働局長","法令","最低賃金法7条"]],
+  sha:[["A","3年","法令","船員保険法69条"],["B","40歳","法令","高齢者医療確保法20条"],["C","財政の均衡を保つこと","法令","確定給付企業年金法57条"],["D","10,000円","法令","児童手当法6条"],["E","5.5","白書","令和4年版厚生労働白書"]]},
+ {y:"R4",yr:"2022",ro:[["A","2.3","法令","障害者雇用促進法施行令（法定雇用率）"],["B","100人超","法令","障害者雇用促進法附則4条（納付金の対象規模）"],["C","ジョブコーチ","白書","令和3年版厚生労働白書"],["D","継続が期待されていた","判例","日立メディコ事件"],["E","従前の労働契約が更新された","判例","日立メディコ事件"]],
+  sha:[["A","61.0","統計","国民医療費の概況"],["B","配偶者","法令","確定拠出年金法41条"],["C","15歳に達する日以後の最初の3月31日までの間にある者","法令","児童手当法18条"],["D","身体上又は精神上の障害","法令","介護保険法7条"],["E","6か月","法令","介護保険法施行規則2条"]]},
+ {y:"R3",yr:"2021",ro:[["A","35歳以上55歳未満","法令","労働施策総合推進法施行規則（就職氷河期世代）"],["B","65歳超雇用推進助成金","白書","令和2年版厚生労働白書"],["C","（公財）産業雇用安定センター","白書","令和2年版厚生労働白書"],["D","特定求職者雇用開発助成金","白書","令和2年版厚生労働白書"],["E","40歳以上","白書","令和2年版厚生労働白書"]],
+  sha:[["A","国民健康保険事業費納付金の納付","法令","国民健康保険法76条"],["B","国民健康保険事業に要する費用","法令","国民健康保険法76条"],["C","被扶養者","法令","船員保険法93条"],["D","15日","法令","児童手当法8条"],["E","3年","法令","確定給付企業年金法41条"]]},
+ {y:"R2",yr:"2020",ro:[["A","雇用動向調査","統計","離職率を知る統計"],["B","就労条件総合調査","統計","年休取得率を知る統計"],["C","雇用均等基本調査","統計","男性の育休取得率を知る統計"],["D","労働力調査","統計","毎月の就業状態"],["E","就業構造基本調査","統計","5年ごとの就業状態"]],sha:null}
+];
+const RESCUE=[["R8","2026","—","—","雇用保険法が2点"],["R7","2025","2点","2点","労災も2点"],["R6","2024","2点","—",""],["R5","2023","—","—",""],["R4","2022","—","—",""],["R3","2021","1点","—","国年も2点"],["R2","2020","2点","2点","健保も2点"],["R1","2019","—","2点",""]];
+
+/* ===== 保存 ===== */
+const S={get(k,d){try{const v=localStorage.getItem("srh_"+k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem("srh_"+k,JSON.stringify(v))}catch(e){}}};
+let progress=S.get("progress",{});
+let mine=S.get("mine",[]);
+let verified=S.get("verified",{});
+const INTERVALS=[0,1,3,7,16,35];
+
+const EXAM=new Date(2027,7,22);
+const TYPE_LABEL={case:"判例",law:"条文",stat:"白書・統計",mine:"自分のカード"};
+const PR={S:0,A:1,B:2};
+const byPrio=(a,b)=>(PR[a.prio]??3)-(PR[b.prio]??3);
+
+/* ===== 道具 ===== */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const ymd=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+const today=()=>ymd(new Date());
+const addDays=n=>{const d=new Date();d.setDate(d.getDate()+n);return ymd(d)};
+const MARK="①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳";
+function toast(msg){const t=$("#toast");t.textContent=msg;t.hidden=false;clearTimeout(toast.h);toast.h=setTimeout(()=>t.hidden=true,1800)}
+
+function allCards(){return [...CASES,...STATS,...mine]}
+function byId(id){return allCards().find(c=>c.id===id)}
+function parse(text){
+  const parts=[];let last=0;const re=/\{\{([^}]+)\}\}/g;let m;
+  while((m=re.exec(text))){if(m.index>last)parts.push({t:"s",v:text.slice(last,m.index)});
+    const xs=m[1].split("|").map(s=>s.trim()).filter(Boolean);parts.push({t:"b",ans:xs[0],decoys:xs.slice(1)});last=re.lastIndex}
+  if(last<text.length)parts.push({t:"s",v:text.slice(last)});return parts}
+function answersOf(type){const out=[];allCards().filter(c=>!type||c.type===type).forEach(c=>parse(c.text).forEach(p=>{if(p.t==="b")out.push(p.ans)}));return out}
+function optionsFor(b,card){
+  const set=[b.ans,...b.decoys.filter(d=>d!==b.ans)];
+  const pool=shuffle(answersOf(card.type).filter(a=>!set.includes(a)));
+  while(set.length<4&&pool.length)set.push(pool.pop());
+  return shuffle([...new Set(set)].slice(0,4))}
+function prog(id){return progress[id]||{box:0,due:null}}
+function record(id,ok){const p=prog(id);p.box=ok?Math.min(p.box+1,5):1;p.due=addDays(INTERVALS[p.box]);p.last=today();progress[id]=p;S.set("progress",progress)}
+function dueCards(){const t=today();return allCards().filter(c=>{const p=progress[c.id];return p&&p.due&&p.due<=t})}
+function chips(c){let h="";
+  if(c.prio)h+=`<span class="chip ${c.prio==="S"?"seal":c.prio==="B"?"ok":""}">優先${c.prio}</span> `;
+  if(c.exam)h+=`<span class="chip warn">${esc(c.exam)}</span> `;
+  if(c.type==="law")h+='<span class="chip">条文</span> ';
+  if(c.type==="mine")h+='<span class="chip">自分</span>';
+  return h}
+function dots(box){let h='<span class="dots" aria-label="習熟度'+box+'/5">';for(let i=1;i<=5;i++)h+=`<i class="${i<=box?"on":""}"></i>`;return h+"</span>"}
+
+/* ===== 画面 ===== */
+const TABS=[["home","要","ホーム"],["kako","過","過去問"],["case","判","判例・条文"],["stat","数","白書・統計"],["exam","選","選択式"],["add","追","追加"]];
+let tab="home";let session=null;
+
+function renderTabs(){$("#tabs").innerHTML=TABS.map(([k,ic,l])=>`<button class="${tab===k?"on":""}" data-tab="${k}" aria-current="${tab===k?"page":"false"}"><span class="ic">${ic}</span>${l}</button>`).join("")}
+function go(t){tab=t;session=null;try{history.replaceState(null,"","#"+t)}catch(e){}render();window.scrollTo(0,0)}
+function render(){renderTabs();const f={home:viewHome,kako:viewKako,case:()=>viewList("case"),stat:()=>viewList("stat"),exam:viewExam,add:viewAdd}[tab];
+  if(session&&session.kind==="drill")return viewDrill();
+  if(session&&session.kind==="dir")return viewDir();
+  f()}
+
+/* --- ホーム --- */
+function viewHome(){
+  const days=Math.max(0,Math.ceil((EXAM-new Date())/864e5));
+  const due=dueCards().length;
+  const learned=t=>allCards().filter(c=>c.type===t&&prog(c.id).box>=3).length;
+  const total=t=>allCards().filter(c=>c.type===t).length;
+  const now=new Date();const ym=now.getFullYear()*12+now.getMonth();
+  const phase=(a,b)=>ym>=a&&ym<=b?"t now":"t";
+  $("#main").innerHTML=`<div class="stack">
+   <section class="panel count">
+     <div class="num">${days}<small>日</small></div>
+     <div><h2>2027年 本試験まで</h2><p class="muted">8月22日（日）で仮置き。例年8月第4日曜で、正式な日程は試験センターの公表後に確認。</p></div>
+   </section>
+   <button class="btn primary block" id="go-due">${due?`今日の復習 ${due}枚を始める`:"今日の復習はありません。新しいカードを解く"}</button>
+   <div class="meter">
+     <div><b>${learned("case")}/${total("case")}</b><span>判例 定着</span></div>
+     <div><b>${learned("stat")}/${total("stat")}</b><span>統計 定着</span></div>
+     <div><b>${mine.length}</b><span>自分のカード</span></div>
+   </div>
+   <div class="note">統計カードは<b>2026年10月22日時点で公表済みの最新値</b>（主に2025年の数値）と、令和8年版の厚生労働白書・労働経済白書（2026年9月29日公表）のテーマです。試験までに新しく公表される数値は「追加」から足してください（ガイド2参照）。</div>
+
+   <section class="panel stack">
+     <div class="eyebrow">過去問から分かったこと</div>
+     <h2>労一は「統計2・判例2・法令1」の型が3年続いている</h2>
+     <p>令和8年の本試験の労一では、空欄5つのうち2つ（障害者の実雇用率2.41％、男女間賃金格差76.6）が試験直前に公表された統計の数値でした。さらに2つは朝日放送事件の判旨、残る1つは育介法の「300人」です。社一は企業年金・目的条文・社会保障統計が毎年の定番です。</p>
+     <button class="btn block" id="go-kako">過去問の分析と2027年の予想を見る</button>
+   </section>
+
+   <h2 style="margin-top:6px">学習法：「どこから出るか分からない」への答え</h2>
+   <details class="guide" open><summary>1. 実は、出題元はかなり絞れる</summary><div class="body">
+     <p>白書・判例が出るのは主に<b>「労務管理その他の労働に関する一般常識（労一）」</b>と<b>「社会保険に関する一般常識（社一）」</b>です。判例は労働基準法・労働契約法の分野でも出ます。</p>
+     <p>出題範囲は広く見えますが、出題元は次の範囲にほぼ収まります。</p>
+     <ul>
+       <li><b>白書</b>：厚生労働白書、労働経済の分析（労働経済白書）が中心。ほかに高齢社会白書、こども白書（旧 少子化社会対策白書）、男女共同参画白書、過労死等防止対策白書</li>
+       <li><b>統計</b>：労働力調査、一般職業紹介状況、就労条件総合調査、賃金構造基本統計調査、雇用均等基本調査、労働組合基礎調査、人口動態統計など10本前後</li>
+       <li><b>判例</b>：最高裁判例のうち、テキストに載る30〜40件。穴になるのはその中の<b>「規範」部分（決まり文句）</b>だけ</li>
+     </ul>
+     <p>白書の文章を丸暗記する必要はありません。<b>数字は「方向と桁」、判例は「決まり文句」</b>を押さえれば対応できます。</p>
+   </div></details>
+
+   <details class="guide"><summary>2. 2027年試験で何が対象になるか</summary><div class="body">
+     <ul>
+       <li><b>白書</b>：令和8年版（2026年9月29日公表）が本命。厚生労働白書は「これからの医療・介護・福祉の現場で働くことを考える」、労働経済白書は「AI等技術革新が進む中での労働市場の現状と課題」。どちらもAI・生産性がキーワード。令和7年版も範囲に入る</li>
+       <li><b>統計</b>：このアプリには2025年の数値を収録済み。ただし試験までにさらに新しい数値が出る。目安は、労働組合基礎調査・就労条件総合調査・障害者／高年齢者の雇用状況が2026年12月頃、労働力調査・一般職業紹介状況の2026年平均と外国人雇用状況が2027年1月末頃、賃金構造基本統計調査が2027年3月頃。公表されたら「追加」でカードにする</li>
+       <li><b>判例</b>：古い有名判例は毎年使える。加えて令和5〜6年の最高裁判例（名古屋自動車学校、滋賀県社会福祉協議会、協同組合グローブなど）は新しく出題されやすい</li>
+       <li><b>白書に書かれる制度改正</b>：2025年成立の年金制度改正法（短時間労働者への適用拡大など）、育児・介護休業法改正、障害者の法定雇用率の引上げ（2026年7月に2.7%）など</li>
+     </ul>
+   </div></details>
+
+   <details class="guide"><summary>3. 知らない問題でも3点を取る解き方</summary><div class="body">
+     <p>選択式は1科目5つの空欄を埋め、<b>3点以上</b>が基準です。令和8年は労一が空欄ごとの4択、社一が20語の語群でした。労一は8年で4回救済されていますが、令和8年は救済がありませんでした。満点ではなく、確実に3つ取りにいきます。</p>
+     <ol>
+       <li><b>語群を先に仕分ける</b>：20語を「数字」「％」「名詞」「状態語（上昇・低下）」に分けると、各空欄の候補は実質4〜5語になる</li>
+       <li><b>数字は方向と水準で絞る</b>：本試験の4択の数字は36.6／56.6／76.6／96.6のように等間隔に並ぶ。「7割台後半」「2％台半ば」と覚えていれば1つに決まる</li>
+       <li><b>判例は決まり文句で選ぶ</b>：「社会通念上」「合理的」「客観的に」「特段の事情」「総合考慮」「自由な意思」は判決文の定番</li>
+       <li><b>白書は行政の文体で選ぶ</b>：「〜が求められる」「〜を推進」。極端な語（必ず・全て・著しく増加）は外れやすい</li>
+       <li><b>空欄どうしの整合性を見る</b>：同じ問題の中で文脈が矛盾しない組合せを選ぶ</li>
+     </ol>
+   </div></details>
+
+   <details class="guide"><summary>4. 2027年8月までの学習カレンダー</summary><div class="body"><div class="timeline">
+     <div class="${phase(2026*12+9,2026*12+11)}"><div class="when">2026年<br>10〜12月</div><div>判例・条文の「優先S」から固める。特に労働組合法の判例と社一の目的条文は、年度が変わっても使える。1日5枚。</div></div>
+     <div class="${phase(2027*12+0,2027*12+2)}"><div class="when">2027年<br>1〜3月</div><div>統計の「方向と桁」を方向ドリルで固める。1月末に公表される2026年平均の労働力調査・有効求人倍率などは、自分のカードに追加する。</div></div>
+     <div class="${phase(2027*12+3,2027*12+5)}"><div class="when">4〜6月</div><div>令和8年版の厚生労働白書・労働経済白書の第1部テーマと要約を読む。予備校の白書・統計対策本（例年春〜初夏に出る）で印のついた文を、1日2〜3文ずつ穴埋めカードにする。</div></div>
+     <div class="${phase(2027*12+6,2027*12+7)}"><div class="when">7〜8月</div><div>「選択式」タブで本試験形式の演習を毎日1回。3点以上が安定して取れるかを見る。</div></div>
+   </div></div></details>
+
+   <details class="guide"><summary>5. このアプリの1日10分の使い方</summary><div class="body"><ol>
+     <li>ホームの「今日の復習」を消化する（間隔をあけて繰り返し出題）</li>
+     <li>「白書・統計」で方向ドリルを1周（上昇か低下かを即答できるようにする）</li>
+     <li>白書やテキストで気になった1文を「追加」から穴埋めカードにする</li>
+     <li>週末に「選択式」で本試験形式を1回</li>
+   </ol>
+   <p class="muted">学習記録はこの端末のブラウザにだけ保存されます。機種変更の前に「追加」タブの書き出しでバックアップしてください。</p></div></details>
+  </div>`;
+  $("#go-kako").onclick=()=>go("kako");
+  $("#go-due").onclick=()=>{let ids=dueCards().map(c=>c.id);
+    if(!ids.length)ids=shuffle(allCards().filter(c=>!progress[c.id])).sort(byPrio).map(c=>c.id).slice(0,5);
+    if(!ids.length)ids=shuffle(allCards().map(c=>c.id)).slice(0,5);
+    startDrill(ids)}
+}
+
+/* --- 一覧 --- */
+function viewList(type){
+  const cards=allCards().filter(c=>c.type===type||(type==="case"&&c.type==="law")||(type==="stat"&&c.type==="mine"&&c.kind==="stat")||(type==="case"&&c.type==="mine"&&c.kind==="case")).sort(byPrio);
+  const isStat=type==="stat";
+  $("#main").innerHTML=`<div class="stack">
+    <div class="row" style="justify-content:space-between"><h2>${isStat?"白書・統計":"判例・条文"}<span class="muted">（${cards.length}枚）</span></h2></div>
+    <p class="muted">${isStat?"2026年10月時点で公表済みの最新値。4択の数字は等間隔に並ぶので、「方向」と「おおよその水準」で選べる。":"判例は判決文のうち空欄になる「規範」の部分を、条文は規模要件の数字と目的条文を練習する。判旨は受験用の要約。"}</p>
+    <p class="muted">優先度は過去問の出題傾向から付けた2027年試験の重要度（S＞A＞B）。<span class="chip warn">R8選択</span>は本試験での出題実績。</p>
+    <div class="row"><button class="btn primary" id="topS">優先Sを解く</button><button class="btn" id="all">全部を順に解く</button>${isStat?'<button class="btn" id="dir">方向ドリル</button>':'<button class="btn" id="weak">苦手だけ</button>'}</div>
+    <div class="list">${cards.map(c=>{const p=prog(c.id);
+      return `<button class="item" data-id="${c.id}"><span class="t">${esc(c.title)}</span><span>${dots(p.box)}</span><span class="m">${esc(c.meta||"")}<br>${chips(c)}</span></button>`}).join("")}</div>
+  </div>`;
+  document.querySelectorAll(".item").forEach(b=>b.onclick=()=>startDrill([b.dataset.id]));
+  $("#all").onclick=()=>startDrill(cards.map(c=>c.id));
+  $("#topS").onclick=()=>startDrill(shuffle(cards.filter(c=>c.prio==="S").map(c=>c.id)));
+  if(isStat)$("#dir").onclick=startDir;
+  else $("#weak").onclick=()=>{const ids=cards.filter(c=>prog(c.id).box<=1).map(c=>c.id);ids.length?startDrill(shuffle(ids)):toast("苦手なカードはありません")};
+}
+
+/* --- カード演習 --- */
+function startDrill(ids){session={kind:"drill",ids,idx:0,ans:{},active:0,okCount:0};render();window.scrollTo(0,0)}
+function viewDrill(){
+  const s=session;const card=byId(s.ids[s.idx]);if(!card){session=null;return render()}
+  const parts=parse(card.text);const blanks=parts.filter(p=>p.t==="b");
+  if(!s.opts)s.opts=blanks.map(b=>optionsFor(b,card));
+  const done=Object.keys(s.ans).length===blanks.length;
+  let bi=-1;
+  const html=parts.map(p=>{if(p.t==="s")return esc(p.v);bi++;const a=s.ans[bi];
+    if(a===undefined)return `<button class="blank ${s.active===bi?"active":""}" data-b="${bi}">（${MARK[bi]}）</button>`;
+    return a===p.ans?`<span class="blank right">${esc(a)}</span>`:`<span class="blank wrong">${esc(a)}<span class="fix">正：${esc(p.ans)}</span></span>`}).join("");
+  const typeChip=chips(card);
+  $("#main").innerHTML=`<div class="stack">
+    <div class="row" style="justify-content:space-between"><span class="eyebrow">${TYPE_LABEL[card.type]}　${s.idx+1} / ${s.ids.length}</span><button class="btn ghost" id="quit">終了</button></div>
+    <div class="panel stack">
+      <div><h2>${esc(card.title)}</h2><div class="row muted">${esc(card.meta||"")} ${typeChip}</div></div>
+      <div class="passage">${html}</div>
+    </div>
+    ${done?`<div class="panel stack">
+        <div class="row">${blanks.every((b,i)=>s.ans[i]===b.ans)?'<span class="stamp ok">正解</span>':'<span class="stamp">要復習</span>'}<span class="muted">次回：${INTERVALS[prog(card.id).box]}日後</span></div>
+        ${card.point?`<p class="point">${esc(card.point)}</p>`:""}
+        ${card.src?`<a class="muted" href="${esc(card.src)}" target="_blank" rel="noopener">出典を開く</a>`:""}
+      </div>
+      <button class="btn primary block" id="next">${s.idx+1<s.ids.length?"次へ":"終わる"}</button>`
+    :`<div class="stack"><p class="muted">空欄（${MARK[s.active]}）に入る語を選ぶ</p><div class="opts">${s.opts[s.active].map(o=>`<button class="opt" data-o="${esc(o)}">${esc(o)}</button>`).join("")}</div></div>`}
+  </div>`;
+  $("#quit").onclick=()=>{session=null;render()};
+  document.querySelectorAll(".blank[data-b]").forEach(b=>b.onclick=()=>{s.active=+b.dataset.b;viewDrill()});
+  document.querySelectorAll(".opt[data-o]").forEach(b=>b.onclick=()=>{
+    s.ans[s.active]=b.dataset.o;
+    const next=blanks.findIndex((_,i)=>s.ans[i]===undefined);
+    if(next<0){record(card.id,blanks.every((bb,i)=>s.ans[i]===bb.ans))}else s.active=next;
+    viewDrill()});
+  if(done){$("#next").onclick=()=>{if(s.idx+1<s.ids.length){s.idx++;s.ans={};s.active=0;s.opts=null;viewDrill();window.scrollTo(0,0)}else{session=null;toast("おつかれさまでした");render()}}}
+}
+
+/* --- 方向ドリル --- */
+function startDir(){const ids=shuffle(STATS.filter(s=>s.trend).map(s=>s.id));session={kind:"dir",ids,idx:0,pick:null,ok:0};render();window.scrollTo(0,0)}
+function viewDir(){
+  const s=session;if(s.idx>=s.ids.length){
+    $("#main").innerHTML=`<div class="stack"><div class="panel result"><span class="score">${s.ok}/${s.ids.length}</span><span class="muted">方向ドリルの結果</span></div><button class="btn primary block" id="again">もう一度</button><button class="btn block" id="back">一覧へ戻る</button></div>`;
+    $("#again").onclick=startDir;$("#back").onclick=()=>{session=null;render()};return}
+  const c=byId(s.ids[s.idx]);const filled=parse(c.text).map(p=>p.t==="s"?p.v:p.ans).join("");
+  $("#main").innerHTML=`<div class="stack">
+    <div class="row" style="justify-content:space-between"><span class="eyebrow">方向ドリル　${s.idx+1} / ${s.ids.length}</span><button class="btn ghost" id="quit">終了</button></div>
+    <div class="panel stack"><span class="muted">${esc(c.meta)}</span><h2>${esc(c.title)}は、前年・前回と比べて？</h2></div>
+    <div class="dir">${["上昇","横ばい","低下"].map(d=>{let cls="";if(s.pick){if(d===c.trend)cls="right";else if(d===s.pick)cls="wrong"}return `<button class="opt ${cls}" data-d="${d}" ${s.pick?"disabled":""}>${d==="上昇"?"↑ 上昇":d==="低下"?"↓ 低下":"→ 横ばい"}</button>`}).join("")}</div>
+    ${s.pick?`<div class="panel stack"><p class="passage" style="font-size:15px;line-height:1.9">${esc(filled)}</p><p class="point">${esc(c.point)}</p></div><button class="btn primary block" id="next">次へ</button>`:""}
+  </div>`;
+  $("#quit").onclick=()=>{session=null;render()};
+  document.querySelectorAll(".opt[data-d]").forEach(b=>b.onclick=()=>{s.pick=b.dataset.d;if(s.pick===c.trend)s.ok++;viewDir()});
+  if(s.pick)$("#next").onclick=()=>{s.idx++;s.pick=null;viewDir();window.scrollTo(0,0)};
+}
+
+/* --- 選択式（本試験形式） ---
+   R8の労一は空欄ごとの4択、社一は20語の語群。どちらの形式でも練習できるようにする。 */
+let exam=null;let examScope=S.get("scope","mix");let examFmt=S.get("fmt","four");
+function buildExam(){
+  let pool=allCards();
+  if(examScope==="case")pool=pool.filter(c=>c.type==="case"||c.type==="law"||(c.type==="mine"&&c.kind==="case"));
+  if(examScope==="stat")pool=pool.filter(c=>c.type==="stat"||(c.type==="mine"&&c.kind==="stat"));
+  if(examScope==="mine")pool=pool.filter(c=>c.type==="mine");
+  if(examScope==="s")pool=pool.filter(c=>c.prio==="S");
+  pool=shuffle(pool);const passages=[];let n=0;
+  for(const c of pool){if(n>=5)break;const parts=parse(c.text);const bs=parts.filter(p=>p.t==="b");if(!bs.length)continue;
+    const keep=shuffle(bs.map((_,i)=>i)).slice(0,Math.min(5-n,bs.length===1?1:Math.max(2,Math.ceil(bs.length/2))));
+    let bi=-1;const segs=parts.map(p=>{if(p.t==="s")return p;bi++;if(keep.includes(bi))return {t:"b",ans:p.ans,decoys:p.decoys,k:null,card:c};return {t:"s",v:p.ans}});
+    passages.push({card:c,segs});n+=keep.length}
+  if(!n)return null;
+  let k=0;passages.forEach(ps=>ps.segs.forEach(sg=>{if(sg.t==="b")sg.k=k++}));
+  const blanks=passages.flatMap(ps=>ps.segs.filter(sg=>sg.t==="b"));
+  blanks.forEach(b=>b.opts=optionsFor(b,b.card));
+  const words=new Set(blanks.map(b=>b.ans));
+  shuffle(blanks.flatMap(b=>b.decoys)).forEach(d=>{if(words.size<16)words.add(d)});
+  shuffle(answersOf()).forEach(a=>{if(words.size<20)words.add(a)});
+  return {passages,blanks,words:shuffle([...words]),fill:{},active:0,graded:false}}
+function viewExam(){
+  const L="ABCDE";
+  const seg=(name,items,cur)=>`<div class="seg" role="group" aria-label="${name}">${items.map(([k,l])=>`<button class="${cur===k?"on":""}" data-${name==="出題範囲"?"s":"f"}="${k}">${l}</button>`).join("")}</div>`;
+  if(!exam){
+    $("#main").innerHTML=`<div class="stack"><h2>選択式（本試験形式）</h2>
+      <p class="muted">5つの空欄（A〜E）を埋めます。令和8年の本試験は、労一が空欄ごとの4択、社一が20語の語群から選ぶ形式でした。3点以上が基準点の目安です。</p>
+      <div class="eyebrow">形式</div>${seg("形式",[["four","空欄ごと4択（労一型）"],["gogun","語群20（社一型）"]],examFmt)}
+      <div class="eyebrow">出題範囲</div>${seg("出題範囲",[["s","優先S"],["mix","混合"],["case","判例・条文"],["stat","白書・統計"],["mine","自分"]],examScope)}
+      <button class="btn primary block" id="start">問題を作る</button></div>`;
+    document.querySelectorAll("[data-s]").forEach(b=>b.onclick=()=>{examScope=b.dataset.s;S.set("scope",examScope);viewExam()});
+    document.querySelectorAll("[data-f]").forEach(b=>b.onclick=()=>{examFmt=b.dataset.f;S.set("fmt",examFmt);viewExam()});
+    $("#start").onclick=()=>{exam=buildExam();if(!exam){toast("この範囲のカードがありません");return}viewExam()};return}
+  const e=exam;const used=new Set(Object.values(e.fill));
+  const score=e.blanks.filter(b=>e.fill[b.k]===b.ans).length;
+  const passHtml=e.passages.map(ps=>`<div class="passage"><span class="lbl">${esc(ps.card.title)}｜${esc(ps.card.meta||"")}</span>${ps.segs.map(sg=>{
+    if(sg.t==="s")return esc(sg.v);const v=e.fill[sg.k];
+    if(e.graded){return v===sg.ans?`<span class="blank right">${L[sg.k]}：${esc(v)}</span>`:`<span class="blank wrong">${L[sg.k]}：${esc(v||"未解答")}<span class="fix">正：${esc(sg.ans)}</span></span>`}
+    return `<button class="blank ${e.active===sg.k?"active":""}" data-k="${sg.k}">${L[sg.k]}${v?"："+esc(v):""}</button>`}).join("")}</div>`).join("");
+  const choices=examFmt==="four"
+    ?`<div class="opts">${e.blanks[e.active].opts.map((w,i)=>`<button class="opt ${e.fill[e.active]===w?"right":""}" data-w="${esc(w)}"><b>${MARK[i]}</b> ${esc(w)}</button>`).join("")}</div>`
+    :`<div class="gogun">${e.words.map((w,i)=>`<button class="opt ${used.has(w)?"used":""}" data-w="${esc(w)}"><b>${MARK[i]||i+1}</b>${esc(w)}</button>`).join("")}</div>`;
+  $("#main").innerHTML=`<div class="stack">
+    <div class="row" style="justify-content:space-between"><h2>選択式</h2><button class="btn ghost" id="reset">作り直す</button></div>
+    <div class="panel stack">${passHtml}</div>
+    ${e.graded?`<div class="panel stack"><div class="result"><span class="score">${score}/5</span>${score>=3?'<span class="stamp ok">基準点クリア</span>':'<span class="stamp">基準点に届かず</span>'}</div>
+       <p class="muted">間違えた空欄の元カードは「要復習」として、次回の復習に回しました。</p></div>
+       <button class="btn primary block" id="new">次の問題</button>`
+     :`<p class="muted">空欄 <b>${L[e.active]}</b> を選択中。${examFmt==="four"?"4つの中から選ぶ":"語群から選ぶ（もう一度押すと外れる）"}</p>
+       ${choices}
+       <button class="btn primary block" id="grade">採点する</button>`}
+  </div>`;
+  $("#reset").onclick=()=>{exam=null;viewExam()};
+  document.querySelectorAll(".blank[data-k]").forEach(b=>b.onclick=()=>{e.active=+b.dataset.k;viewExam()});
+  document.querySelectorAll(".opt[data-w]").forEach(b=>b.onclick=()=>{const w=b.dataset.w;
+    if(e.fill[e.active]===w)delete e.fill[e.active];else e.fill[e.active]=w;
+    const next=e.blanks.find(bb=>e.fill[bb.k]===undefined);if(next&&e.fill[e.active]!==undefined)e.active=next.k;viewExam()});
+  if(e.graded)$("#new").onclick=()=>{exam=buildExam();viewExam();window.scrollTo(0,0)};
+  else $("#grade").onclick=()=>{e.graded=true;e.passages.forEach(ps=>{const ok=ps.segs.filter(sg=>sg.t==="b").every(sg=>e.fill[sg.k]===sg.ans);record(ps.card.id,ok)});viewExam();window.scrollTo(0,0)};
+}
+
+/* --- 過去問分析 --- */
+function viewKako(){
+  const CAT={"統計":"seal","白書":"warn","判例":"","法令":"ok"};
+  const count=(key,yrs)=>{const c={統計:0,白書:0,判例:0,法令:0};KAKO.filter(k=>k[key]&&(!yrs||yrs.includes(k.y))).forEach(k=>k[key].forEach(r=>c[r[2]]++));return c};
+  const bar=c=>{const tot=Object.values(c).reduce((a,b)=>a+b,0);return `<div class="bar" role="img" aria-label="${Object.entries(c).map(([k,v])=>k+v).join("、")}">${Object.entries(c).filter(([,v])=>v).map(([k,v])=>`<span class="b-${CAT[k]||"acc"}" style="flex:${v}">${k} ${v}</span>`).join("")}</div><p class="muted">${tot}空欄の内訳</p>`};
+  const row=(y,list)=>list?`<div class="kq">${list.map(r=>`<div class="kr"><b>${r[0]}</b><span class="chip ${CAT[r[2]]}">${r[2]}</span><div class="kt"><div>${esc(r[1])}</div><div class="muted">${esc(r[3])}</div></div></div>`).join("")}</div>`:`<p class="muted">（未収録）</p>`;
+  $("#main").innerHTML=`<div class="stack">
+    <h2>過去問の分析：選択式の労一・社一</h2>
+    <p class="muted">令和2〜8年の本試験について、空欄ごとに出題元を分類しました。試験センターが公表した問題・正答と、予備校の解答速報で確かめています。</p>
+
+    <section class="panel stack">
+      <h3>労一は3年続けて「統計2・判例2・法令1」の型</h3>
+      ${bar(count("ro",["R6","R7","R8"]))}
+      <ul class="ul">
+        <li><b>判例は5年連続</b>（R4〜R8）。毎年1つの判例から空欄2つ。R6〜R8は3年続けて<b>労働組合法</b>の判例（労働協約の拡張適用→施設管理→使用者性）。</li>
+        <li><b>統計は試験直前の最新値</b>。R8は2025年12月公表の障害者雇用状況と2026年3月公表の賃金構造基本統計調査。4択の数字は36.6／56.6／76.6／96.6のように等間隔なので、おおよその水準を知っていれば選べる。</li>
+        <li><b>法令は「規模要件・期間」の数字</b>。R8は育介法の300人、R6は均等法の1年、R4は障害者雇用の100人超。<b>改正で数字が変わった直後</b>に出る。</li>
+      </ul>
+    </section>
+
+    <section class="panel stack">
+      <h3>社一は「目的条文」と「企業年金」と「社会保障統計」</h3>
+      ${bar(count("sha"))}
+      <ul class="ul">
+        <li><b>企業年金（確定給付・確定拠出）は6年で5回</b>（R3・R4・R5・R7・R8）。ほぼ毎年1〜2空欄。</li>
+        <li><b>目的条文・理念条文が3年連続</b>（R6 国保法1条・高確法1条、R7 介保法2条・高確法4条、R8 確拠法1条）。</li>
+        <li><b>社会保障統計が毎年1〜2空欄</b>（国民医療費、国民生活基礎調査、介護保険事業状況報告、国民年金の納付率・免除割合）。国民年金はR7・R8と2年連続。</li>
+        <li><b>前年版の厚生労働白書</b>がR5・R7・R8で出題。R8は令和7年版の総論（憲法25条・生存権）だった。</li>
+      </ul>
+    </section>
+
+    <section class="panel stack">
+      <h3>2027年（第59回）の予想と対策</h3>
+      <ol class="ul">
+        <li><b>労一の判例</b>：労組法の流れが続くなら、国鉄札幌運転区・三井倉庫港運・東芝労組小向支部。流れが変わるなら、雇止め・採用内定・就業規則などの労働契約法の判例。どちらも「優先S・A」に入れた。</li>
+        <li><b>労一の統計</b>：2026年12月〜2027年3月に公表される最新値（障害者雇用状況、賃金構造基本統計調査、労働力調査の2026年平均など）。公表されたらすぐ「追加」でカードにする。</li>
+        <li><b>労一の法令</b>：2026年4月施行の改正女性活躍推進法（101人以上の公表義務）、2026年7月の法定雇用率2.7％。</li>
+        <li><b>社一</b>：確定給付企業年金法1条（確拠の翌年）、介護保険法1条、令和8年版厚生労働白書（医療・介護・福祉の現場）、国民年金の納付率。</li>
+      </ol>
+      <button class="btn primary block" id="goS">優先Sのカードを解く</button>
+    </section>
+
+    <section class="panel stack">
+      <h3>基準点の救済（引き下げ）の記録</h3>
+      <div class="tbl"><table><thead><tr><th>年度</th><th>労一</th><th>社一</th><th>他の科目</th></tr></thead><tbody>
+      ${RESCUE.map(r=>`<tr><td>${r[0]}<span class="muted">（${r[1]}）</span></td><td>${r[2]}</td><td>${r[3]}</td><td class="muted">${r[4]}</td></tr>`).join("")}
+      </tbody></table></div>
+      <p class="muted">R1〜R8の8年で、労一は4回、社一は3回救済されている。ただしR8はどちらも救済なし（平均点 労一2.8点・社一2.4点）。救済をあてにせず3点を取りにいく。</p>
+    </section>
+
+    <h3>年度別の出題元</h3>
+    ${KAKO.map(k=>`<details class="guide"${k.y==="R8"?" open":""}><summary>${k.y}（${k.yr}年）</summary><div class="body">
+      <div class="eyebrow">労一（問4）</div>${row(k.y,k.ro)}
+      <div class="eyebrow">社一（問5）</div>${row(k.y,k.sha)}</div></details>`).join("")}
+
+    <section class="panel stack">
+      <h3>択一式も統計は毎年3問前後</h3>
+      <p>R8の択一式は、問1が若年者雇用実態調査、問2が雇用均等基本調査、問3が労働争議統計調査。択一は数年前の調査も使われ、数字そのものより「調査名と傾向」が問われる。</p>
+    </section>
+  </div>`;
+  $("#goS").onclick=()=>startDrill(shuffle(allCards().filter(c=>c.prio==="S").map(c=>c.id)));
+}
+
+/* --- 追加 --- */
+let delArm=null;
+function viewAdd(){
+  $("#main").innerHTML=`<div class="stack">
+    <h2>自分のカードを追加</h2>
+    <p class="muted">白書や統計、テキストで「出そう」と思った1文を、そのまま穴埋め問題にします。答えにしたい語を【 】で囲むだけです。</p>
+    <form class="panel stack" id="f">
+      <label class="f">種類<select id="f-kind"><option value="stat">白書・統計</option><option value="case">判例</option><option value="other">その他（法改正など）</option></select></label>
+      <label class="f">タイトル<input type="text" id="f-title" placeholder="例：令和8年版 労働経済白書 第1章"></label>
+      <label class="f">出典・年度<input type="text" id="f-meta" placeholder="例：労働経済の分析｜2026年公表"></label>
+      <label class="f">本文（答えを【 】で囲む）<textarea id="f-text" placeholder="例：2025年平均の完全失業率は【2.5】％で、前年と【同水準】であった。"></textarea></label>
+      <label class="f">ダミーの選択肢（任意・読点区切り）<input type="text" id="f-decoy" placeholder="例：2.0、3.0、上昇、低下"></label>
+      <label class="f">覚え方・メモ（任意）<input type="text" id="f-point" placeholder="例：2%台半ばで横ばい"></label>
+      <button class="btn primary block" type="submit">カードを保存</button>
+    </form>
+    <h2>保存したカード<span class="muted">（${mine.length}枚）</span></h2>
+    ${mine.length?`<div class="list">${mine.map(c=>`<div class="item"><span class="t">${esc(c.title)}</span><button class="btn ghost" data-del="${c.id}" style="padding:4px 10px">${delArm===c.id?"もう一度押すと削除":"削除"}</button><span class="m">${esc(c.meta||"")}　<button class="btn ghost" data-try="${c.id}" style="padding:2px 8px;font-size:12px">解く</button></span></div>`).join("")}</div>`
+      :`<p class="muted">まだありません。2027年試験向けの最新数値（2025年値）や、令和8年版白書の第1部テーマから作るのがおすすめです。</p>`}
+    <details class="guide"><summary>バックアップ（書き出し・読み込み）</summary><div class="body">
+      <p class="muted">下の文字列をメモ帳などにコピーして保存します。読み込むときは貼り付けて「読み込む」を押します。</p>
+      <textarea id="bk"></textarea>
+      <div class="row"><button class="btn" id="bk-out">書き出し</button><button class="btn" id="bk-copy">コピー</button><button class="btn" id="bk-in">読み込む</button></div>
+    </div></details>
+  </div>`;
+  $("#f").onsubmit=ev=>{ev.preventDefault();
+    const raw=$("#f-text").value.trim();if(!/【[^】]+】/.test(raw)){toast("答えにする語を【 】で囲んでください");return}
+    const decoys=$("#f-decoy").value.split(/[、,，]/).map(s=>s.trim()).filter(Boolean);
+    const text=raw.replace(/【([^】]+)】/g,(_,a)=>"{{"+[a.trim(),...shuffle(decoys).slice(0,3)].join("|")+"}}");
+    mine.push({id:"m"+Date.now(),type:"mine",kind:$("#f-kind").value,title:$("#f-title").value.trim()||"自分のカード",meta:$("#f-meta").value.trim(),text,point:$("#f-point").value.trim()});
+    S.set("mine",mine);toast("保存しました");viewAdd()};
+  document.querySelectorAll("[data-del]").forEach(b=>b.onclick=()=>{const id=b.dataset.del;
+    if(delArm!==id){delArm=id;viewAdd();return}
+    mine=mine.filter(c=>c.id!==id);delete progress[id];S.set("mine",mine);S.set("progress",progress);delArm=null;toast("削除しました");viewAdd()});
+  document.querySelectorAll("[data-try]").forEach(b=>b.onclick=()=>startDrill([b.dataset.try]));
+  $("#bk-out").onclick=()=>{$("#bk").value=JSON.stringify({mine,progress,verified})};
+  $("#bk-copy").onclick=()=>{const t=$("#bk");if(!t.value)t.value=JSON.stringify({mine,progress,verified});
+    navigator.clipboard&&navigator.clipboard.writeText(t.value).then(()=>toast("コピーしました"),()=>{t.select();toast("選択しました。長押しでコピーしてください")})||(t.select(),toast("選択しました。長押しでコピーしてください"))};
+  $("#bk-in").onclick=()=>{try{const d=JSON.parse($("#bk").value);mine=d.mine||[];progress=d.progress||{};verified=d.verified||{};
+    S.set("mine",mine);S.set("progress",progress);S.set("verified",verified);toast("読み込みました");viewAdd()}catch(e){toast("形式が正しくありません。書き出した文字列をそのまま貼り付けてください")}};
+}
+
+/* ===== 起動 ===== */
+$("#tabs").addEventListener("click",ev=>{const b=ev.target.closest("[data-tab]");if(b){exam=b.dataset.tab==="exam"?exam:exam;go(b.dataset.tab)}});
+const h=(location.hash||"").slice(1);if(TABS.some(t=>t[0]===h))tab=h;
+render();
+</script>
+
+</html>
