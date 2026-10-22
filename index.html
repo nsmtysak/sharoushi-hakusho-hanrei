@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#2B3F8F">
 <style>
 :root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -34,6 +34,8 @@ img{max-width:100%}
   --accent:#93A6F2; --accent-soft:#232C47; --seal:#E8746A; --seal-soft:#3A2424;
   --ok:#62C595; --ok-soft:#1C3329; --warn:#E3B54F; --warn-soft:#3A3020; color-scheme:dark}
 *{box-sizing:border-box}
+/* 連続タップで画面が拡大されないようにする（2本指での拡大は残す） */
+html,body,button,a,input,select,textarea,summary{touch-action:manipulation}
 body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.7;-webkit-text-size-adjust:100%}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
 .wrap{max-width:560px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:12px calc(var(--tab-h) + 28px + env(safe-area-inset-bottom,0px))}
