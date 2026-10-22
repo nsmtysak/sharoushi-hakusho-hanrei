@@ -125,10 +125,6 @@ details.guide .body{padding:0 16px 16px;display:flex;flex-direction:column;gap:1
 .seg button{flex:1;border:0;background:transparent;border-radius:8px;padding:8px 4px;font-size:13px;font-weight:700;color:var(--sub)}
 .seg button.on{background:var(--accent);color:var(--paper)}
 
-/* フォーム */
-label.f{display:flex;flex-direction:column;gap:4px;font-size:13px;font-weight:700}
-input[type=text],textarea,select{font:inherit;font-weight:400;font-size:16px;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:10px;width:100%}
-textarea{min-height:110px;resize:vertical;line-height:1.6}
 .note{background:var(--warn-soft);color:var(--ink);border-radius:10px;padding:10px 12px;font-size:13px}
 
 /* 過去問分析 */
@@ -148,7 +144,7 @@ th{font-size:12px;color:var(--sub)}
 
 /* タブ */
 nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--paper);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px);padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px)}
-nav.tabs .in{max-width:560px;margin:0 auto;display:grid;grid-template-columns:repeat(6,1fr);height:var(--tab-h)}
+nav.tabs .in{max-width:560px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr);height:var(--tab-h)}
 nav.tabs button{border:0;background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:11px;font-weight:700;color:var(--sub)}
 nav.tabs button .ic{font-family:var(--f-text);font-size:19px;line-height:1}
 nav.tabs button.on{color:var(--accent)}
@@ -396,7 +392,7 @@ STATS.push(
   point:"令和6年の社一では第1号被保険者に占める認定者の割合（18.9％）が出た。第1号被保険者数は3,584万人。"},
  {id:"s26",type:"stat",title:"公的年金だけで暮らす高齢者世帯",meta:"国民生活基礎調査｜2024年調査（2025年7月公表）",trend:"",src:"https://limo.media/articles/-/90063",
   text:"公的年金・恩給を受給している高齢者世帯のうち、公的年金・恩給の総所得に占める割合が{{100％|80〜100％未満|60〜80％未満|40〜60％未満}}の世帯は43.4％である。",
-  point:"令和6年の社一は2022年調査（44.0％）から同じ形で出た。2025年調査（2026年7月公表）の値は報道によって数字が違うので、厚生労働省の概況で確かめてからカードに追加する。"}
+  point:"令和6年の社一は2022年調査（44.0％）から同じ形で出た。2025年調査（2026年7月公表）の値は報道によって数字が違うので、厚生労働省の概況で確かめてから差し替える。"}
 );
 
 /* 既存の統計カードに、過去の出題実績と2027年の優先度を付ける */
@@ -431,12 +427,11 @@ const RESCUE=[["R8","2026","—","—","雇用保険法が2点"],["R7","2025","2
 /* ===== 保存 ===== */
 const S={get(k,d){try{const v=localStorage.getItem("srh_"+k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem("srh_"+k,JSON.stringify(v))}catch(e){}}};
 let progress=S.get("progress",{});
-let mine=S.get("mine",[]);
 let verified=S.get("verified",{});
 const INTERVALS=[0,1,3,7,16,35];
 
 const EXAM=new Date(2027,7,22);
-const TYPE_LABEL={case:"判例",law:"条文",stat:"白書・統計",mine:"自分のカード"};
+const TYPE_LABEL={case:"判例",law:"条文",stat:"白書・統計"};
 const PR={S:0,A:1,B:2};
 const byPrio=(a,b)=>(PR[a.prio]??3)-(PR[b.prio]??3);
 
@@ -450,7 +445,7 @@ const addDays=n=>{const d=new Date();d.setDate(d.getDate()+n);return ymd(d)};
 const MARK="①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳";
 function toast(msg){const t=$("#toast");t.textContent=msg;t.hidden=false;clearTimeout(toast.h);toast.h=setTimeout(()=>t.hidden=true,1800)}
 
-function allCards(){return [...CASES,...STATS,...mine]}
+function allCards(){return [...CASES,...STATS]}
 function byId(id){return allCards().find(c=>c.id===id)}
 function parse(text){
   const parts=[];let last=0;const re=/\{\{([^}]+)\}\}/g;let m;
@@ -470,17 +465,16 @@ function chips(c){let h="";
   if(c.prio)h+=`<span class="chip ${c.prio==="S"?"seal":c.prio==="B"?"ok":""}">優先${c.prio}</span> `;
   if(c.exam)h+=`<span class="chip warn">${esc(c.exam)}</span> `;
   if(c.type==="law")h+='<span class="chip">条文</span> ';
-  if(c.type==="mine")h+='<span class="chip">自分</span>';
   return h}
 function dots(box){let h='<span class="dots" aria-label="習熟度'+box+'/5">';for(let i=1;i<=5;i++)h+=`<i class="${i<=box?"on":""}"></i>`;return h+"</span>"}
 
 /* ===== 画面 ===== */
-const TABS=[["home","要","ホーム"],["kako","過","過去問"],["case","判","判例"],["stat","数","統計"],["exam","選","選択式"],["add","追","追加"]];
+const TABS=[["home","要","ホーム"],["kako","過","過去問"],["case","判","判例"],["stat","数","統計"],["exam","選","選択式"]];
 let tab="home";let session=null;
 
 function renderTabs(){$("#tabs").innerHTML=TABS.map(([k,ic,l])=>`<button class="${tab===k?"on":""}" data-tab="${k}" aria-current="${tab===k?"page":"false"}"><span class="ic">${ic}</span>${l}</button>`).join("")}
 function go(t){tab=t;session=null;try{history.replaceState(null,"","#"+t)}catch(e){}render();window.scrollTo(0,0)}
-function render(){renderTabs();const f={home:viewHome,kako:viewKako,case:()=>viewList("case"),stat:()=>viewList("stat"),exam:viewExam,add:viewAdd}[tab];
+function render(){renderTabs();const f={home:viewHome,kako:viewKako,case:()=>viewList("case"),stat:()=>viewList("stat"),exam:viewExam}[tab];
   if(session&&session.kind==="drill")return viewDrill();
   if(session&&session.kind==="dir")return viewDir();
   f()}
@@ -502,9 +496,9 @@ function viewHome(){
    <div class="meter">
      <div><b>${learned("case")}/${total("case")}</b><span>判例 定着</span></div>
      <div><b>${learned("stat")}/${total("stat")}</b><span>統計 定着</span></div>
-     <div><b>${mine.length}</b><span>自分のカード</span></div>
+     <div><b>${learned("law")}/${total("law")}</b><span>条文 定着</span></div>
    </div>
-   <div class="note">統計カードは<b>2026年10月22日時点で公表済みの最新値</b>（主に2025年の数値）と、令和8年版の厚生労働白書・労働経済白書（2026年9月29日公表）のテーマです。試験までに新しく公表される数値は「追加」から足してください（ガイド2参照）。</div>
+   <div class="note">統計カードは<b>2026年10月22日時点で公表済みの最新値</b>（主に2025年の数値）と、令和8年版の厚生労働白書・労働経済白書（2026年9月29日公表）のテーマです。試験までに新しく公表される数値は、公表され次第アプリ側で差し替えます（公表予定はガイド2）。</div>
 
    <section class="panel stack">
      <div class="eyebrow">過去問から分かったこと</div>
@@ -528,7 +522,7 @@ function viewHome(){
    <details class="guide"><summary>2. 2027年試験で何が対象になるか</summary><div class="body">
      <ul>
        <li><b>白書</b>：令和8年版（2026年9月29日公表）が本命。厚生労働白書は「これからの医療・介護・福祉の現場で働くことを考える」、労働経済白書は「AI等技術革新が進む中での労働市場の現状と課題」。どちらもAI・生産性がキーワード。令和7年版も範囲に入る</li>
-       <li><b>統計</b>：このアプリには2025年の数値を収録済み。ただし試験までにさらに新しい数値が出る。目安は、労働組合基礎調査・就労条件総合調査・障害者／高年齢者の雇用状況が2026年12月頃、労働力調査・一般職業紹介状況の2026年平均と外国人雇用状況が2027年1月末頃、賃金構造基本統計調査が2027年3月頃。公表されたら「追加」でカードにする</li>
+       <li><b>統計</b>：このアプリには2025年の数値を収録済み。ただし試験までにさらに新しい数値が出る。目安は、労働組合基礎調査・就労条件総合調査・障害者／高年齢者の雇用状況が2026年12月頃、労働力調査・一般職業紹介状況の2026年平均と外国人雇用状況が2027年1月末頃、賃金構造基本統計調査が2027年3月頃。公表され次第、このアプリの数値を差し替える</li>
        <li><b>判例</b>：古い有名判例は毎年使える。加えて令和5〜6年の最高裁判例（名古屋自動車学校、滋賀県社会福祉協議会、協同組合グローブなど）は新しく出題されやすい</li>
        <li><b>白書に書かれる制度改正</b>：2025年成立の年金制度改正法（短時間労働者への適用拡大など）、育児・介護休業法改正、障害者の法定雇用率の引上げ（2026年7月に2.7%）など</li>
      </ul>
@@ -547,7 +541,7 @@ function viewHome(){
 
    <details class="guide"><summary>4. 2027年8月までの学習カレンダー</summary><div class="body"><div class="timeline">
      <div class="${phase(2026*12+9,2026*12+11)}"><div class="when">2026年<br>10〜12月</div><div>判例・条文の「優先S」から固める。特に労働組合法の判例と社一の目的条文は、年度が変わっても使える。1日5枚。</div></div>
-     <div class="${phase(2027*12+0,2027*12+2)}"><div class="when">2027年<br>1〜3月</div><div>統計の「方向と桁」を方向ドリルで固める。1月末に公表される2026年平均の労働力調査・有効求人倍率などは、自分のカードに追加する。</div></div>
+     <div class="${phase(2027*12+0,2027*12+2)}"><div class="when">2027年<br>1〜3月</div><div>統計の「方向と桁」を方向ドリルで固める。1月末に公表される2026年平均の労働力調査・有効求人倍率などは、公表後にアプリへ反映する。</div></div>
      <div class="${phase(2027*12+3,2027*12+5)}"><div class="when">4〜6月</div><div>令和8年版の厚生労働白書・労働経済白書の第1部テーマと要約を読む。予備校の白書・統計対策本（例年春〜初夏に出る）で印のついた文を、1日2〜3文ずつ穴埋めカードにする。</div></div>
      <div class="${phase(2027*12+6,2027*12+7)}"><div class="when">7〜8月</div><div>「選択式」タブで本試験形式の演習を毎日1回。3点以上が安定して取れるかを見る。</div></div>
    </div></div></details>
@@ -555,10 +549,9 @@ function viewHome(){
    <details class="guide"><summary>5. このアプリの1日10分の使い方</summary><div class="body"><ol>
      <li>ホームの「今日の復習」を消化する（間隔をあけて繰り返し出題）</li>
      <li>「白書・統計」で方向ドリルを1周（上昇か低下かを即答できるようにする）</li>
-     <li>白書やテキストで気になった1文を「追加」から穴埋めカードにする</li>
      <li>週末に「選択式」で本試験形式を1回</li>
    </ol>
-   <p class="muted">学習記録はこの端末のブラウザにだけ保存されます。機種変更の前に「追加」タブの書き出しでバックアップしてください。</p></div></details>
+   <p class="muted">学習記録はこの端末のブラウザにだけ保存されます。</p></div></details>
   </div>`;
   $("#go-kako").onclick=()=>go("kako");
   $("#go-due").onclick=()=>{let ids=dueCards().map(c=>c.id);
@@ -569,7 +562,7 @@ function viewHome(){
 
 /* --- 一覧 --- */
 function viewList(type){
-  const cards=allCards().filter(c=>c.type===type||(type==="case"&&c.type==="law")||(type==="stat"&&c.type==="mine"&&c.kind==="stat")||(type==="case"&&c.type==="mine"&&c.kind==="case")).sort(byPrio);
+  const cards=allCards().filter(c=>c.type===type||(type==="case"&&c.type==="law")).sort(byPrio);
   const isStat=type==="stat";
   $("#main").innerHTML=`<div class="stack">
     <div class="row" style="justify-content:space-between"><h2>${isStat?"白書・統計":"判例・条文"}<span class="muted">（${cards.length}枚）</span></h2></div>
@@ -645,9 +638,8 @@ function viewDir(){
 let exam=null;let examScope=S.get("scope","mix");let examFmt=S.get("fmt","four");
 function buildExam(){
   let pool=allCards();
-  if(examScope==="case")pool=pool.filter(c=>c.type==="case"||c.type==="law"||(c.type==="mine"&&c.kind==="case"));
-  if(examScope==="stat")pool=pool.filter(c=>c.type==="stat"||(c.type==="mine"&&c.kind==="stat"));
-  if(examScope==="mine")pool=pool.filter(c=>c.type==="mine");
+  if(examScope==="case")pool=pool.filter(c=>c.type==="case"||c.type==="law");
+  if(examScope==="stat")pool=pool.filter(c=>c.type==="stat");
   if(examScope==="s")pool=pool.filter(c=>c.prio==="S");
   pool=shuffle(pool);const passages=[];let n=0;
   for(const c of pool){if(n>=5)break;const parts=parse(c.text);const bs=parts.filter(p=>p.t==="b");if(!bs.length)continue;
@@ -669,7 +661,7 @@ function viewExam(){
     $("#main").innerHTML=`<div class="stack"><h2>選択式（本試験形式）</h2>
       <p class="muted">5つの空欄（A〜E）を埋めます。令和8年の本試験は、労一が空欄ごとの4択、社一が20語の語群から選ぶ形式でした。3点以上が基準点の目安です。</p>
       <div class="eyebrow">形式</div>${seg("形式",[["four","空欄ごと4択（労一型）"],["gogun","語群20（社一型）"]],examFmt)}
-      <div class="eyebrow">出題範囲</div>${seg("出題範囲",[["s","優先S"],["mix","混合"],["case","判例・条文"],["stat","白書・統計"],["mine","自分"]],examScope)}
+      <div class="eyebrow">出題範囲</div>${seg("出題範囲",[["s","優先S"],["mix","混合"],["case","判例・条文"],["stat","白書・統計"]],examScope)}
       <button class="btn primary block" id="start">問題を作る</button></div>`;
     document.querySelectorAll("[data-s]").forEach(b=>b.onclick=()=>{examScope=b.dataset.s;S.set("scope",examScope);viewExam()});
     document.querySelectorAll("[data-f]").forEach(b=>b.onclick=()=>{examFmt=b.dataset.f;S.set("fmt",examFmt);viewExam()});
@@ -737,7 +729,7 @@ function viewKako(){
       <h3>2027年（第59回）の予想と対策</h3>
       <ol class="ul">
         <li><b>労一の判例</b>：労組法の流れが続くなら、国鉄札幌運転区・三井倉庫港運・東芝労組小向支部。流れが変わるなら、雇止め・採用内定・就業規則などの労働契約法の判例。どちらも「優先S・A」に入れた。</li>
-        <li><b>労一の統計</b>：2026年12月〜2027年3月に公表される最新値（障害者雇用状況、賃金構造基本統計調査、労働力調査の2026年平均など）。公表されたらすぐ「追加」でカードにする。</li>
+        <li><b>労一の統計</b>：2026年12月〜2027年3月に公表される最新値（障害者雇用状況、賃金構造基本統計調査、労働力調査の2026年平均など）。公表され次第、アプリの数値を差し替える。</li>
         <li><b>労一の法令</b>：2026年4月施行の改正女性活躍推進法（101人以上の公表義務）、2026年7月の法定雇用率2.7％。</li>
         <li><b>社一</b>：確定給付企業年金法1条（確拠の翌年）、介護保険法1条、令和8年版厚生労働白書（医療・介護・福祉の現場）、国民年金の納付率。</li>
       </ol>
@@ -763,47 +755,6 @@ function viewKako(){
     </section>
   </div>`;
   $("#goS").onclick=()=>startDrill(shuffle(allCards().filter(c=>c.prio==="S").map(c=>c.id)));
-}
-
-/* --- 追加 --- */
-let delArm=null;
-function viewAdd(){
-  $("#main").innerHTML=`<div class="stack">
-    <h2>自分のカードを追加</h2>
-    <p class="muted">白書や統計、テキストで「出そう」と思った1文を、そのまま穴埋め問題にします。答えにしたい語を【 】で囲むだけです。</p>
-    <form class="panel stack" id="f">
-      <label class="f">種類<select id="f-kind"><option value="stat">白書・統計</option><option value="case">判例</option><option value="other">その他（法改正など）</option></select></label>
-      <label class="f">タイトル<input type="text" id="f-title" placeholder="例：令和8年版 労働経済白書 第1章"></label>
-      <label class="f">出典・年度<input type="text" id="f-meta" placeholder="例：労働経済の分析｜2026年公表"></label>
-      <label class="f">本文（答えを【 】で囲む）<textarea id="f-text" placeholder="例：2025年平均の完全失業率は【2.5】％で、前年と【同水準】であった。"></textarea></label>
-      <label class="f">ダミーの選択肢（任意・読点区切り）<input type="text" id="f-decoy" placeholder="例：2.0、3.0、上昇、低下"></label>
-      <label class="f">覚え方・メモ（任意）<input type="text" id="f-point" placeholder="例：2%台半ばで横ばい"></label>
-      <button class="btn primary block" type="submit">カードを保存</button>
-    </form>
-    <h2>保存したカード<span class="muted">（${mine.length}枚）</span></h2>
-    ${mine.length?`<div class="list">${mine.map(c=>`<div class="item"><span class="t">${esc(c.title)}</span><button class="btn ghost" data-del="${c.id}" style="padding:4px 10px">${delArm===c.id?"もう一度押すと削除":"削除"}</button><span class="m">${esc(c.meta||"")}　<button class="btn ghost" data-try="${c.id}" style="padding:2px 8px;font-size:12px">解く</button></span></div>`).join("")}</div>`
-      :`<p class="muted">まだありません。2027年試験向けの最新数値（2025年値）や、令和8年版白書の第1部テーマから作るのがおすすめです。</p>`}
-    <details class="guide"><summary>バックアップ（書き出し・読み込み）</summary><div class="body">
-      <p class="muted">下の文字列をメモ帳などにコピーして保存します。読み込むときは貼り付けて「読み込む」を押します。</p>
-      <textarea id="bk"></textarea>
-      <div class="row"><button class="btn" id="bk-out">書き出し</button><button class="btn" id="bk-copy">コピー</button><button class="btn" id="bk-in">読み込む</button></div>
-    </div></details>
-  </div>`;
-  $("#f").onsubmit=ev=>{ev.preventDefault();
-    const raw=$("#f-text").value.trim();if(!/【[^】]+】/.test(raw)){toast("答えにする語を【 】で囲んでください");return}
-    const decoys=$("#f-decoy").value.split(/[、,，]/).map(s=>s.trim()).filter(Boolean);
-    const text=raw.replace(/【([^】]+)】/g,(_,a)=>"{{"+[a.trim(),...shuffle(decoys).slice(0,3)].join("|")+"}}");
-    mine.push({id:"m"+Date.now(),type:"mine",kind:$("#f-kind").value,title:$("#f-title").value.trim()||"自分のカード",meta:$("#f-meta").value.trim(),text,point:$("#f-point").value.trim()});
-    S.set("mine",mine);toast("保存しました");viewAdd()};
-  document.querySelectorAll("[data-del]").forEach(b=>b.onclick=()=>{const id=b.dataset.del;
-    if(delArm!==id){delArm=id;viewAdd();return}
-    mine=mine.filter(c=>c.id!==id);delete progress[id];S.set("mine",mine);S.set("progress",progress);delArm=null;toast("削除しました");viewAdd()});
-  document.querySelectorAll("[data-try]").forEach(b=>b.onclick=()=>startDrill([b.dataset.try]));
-  $("#bk-out").onclick=()=>{$("#bk").value=JSON.stringify({mine,progress,verified})};
-  $("#bk-copy").onclick=()=>{const t=$("#bk");if(!t.value)t.value=JSON.stringify({mine,progress,verified});
-    navigator.clipboard&&navigator.clipboard.writeText(t.value).then(()=>toast("コピーしました"),()=>{t.select();toast("選択しました。長押しでコピーしてください")})||(t.select(),toast("選択しました。長押しでコピーしてください"))};
-  $("#bk-in").onclick=()=>{try{const d=JSON.parse($("#bk").value);mine=d.mine||[];progress=d.progress||{};verified=d.verified||{};
-    S.set("mine",mine);S.set("progress",progress);S.set("verified",verified);toast("読み込みました");viewAdd()}catch(e){toast("形式が正しくありません。書き出した文字列をそのまま貼り付けてください")}};
 }
 
 /* ===== 起動 ===== */
