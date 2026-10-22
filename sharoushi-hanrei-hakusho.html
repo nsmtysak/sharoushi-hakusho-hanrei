@@ -461,7 +461,7 @@ function chips(c){let h="";
 function dots(box){let h='<span class="dots" aria-label="習熟度'+box+'/5">';for(let i=1;i<=5;i++)h+=`<i class="${i<=box?"on":""}"></i>`;return h+"</span>"}
 
 /* ===== 画面 ===== */
-const TABS=[["home","要","ホーム"],["kako","過","過去問"],["case","判","判例・条文"],["stat","数","白書・統計"],["exam","選","選択式"],["add","追","追加"]];
+const TABS=[["home","要","ホーム"],["kako","過","過去問"],["case","判","判例"],["stat","数","統計"],["exam","選","選択式"],["add","追","追加"]];
 let tab="home";let session=null;
 
 function renderTabs(){$("#tabs").innerHTML=TABS.map(([k,ic,l])=>`<button class="${tab===k?"on":""}" data-tab="${k}" aria-current="${tab===k?"page":"false"}"><span class="ic">${ic}</span>${l}</button>`).join("")}
