@@ -142,6 +142,32 @@ th,td{border-bottom:1px solid var(--line);padding:7px 6px;text-align:left;white-
 th{font-size:12px;color:var(--sub)}
 .opt b{color:var(--sub);margin-right:2px}
 
+/* 選択肢を画面下に固定する */
+.dock{position:fixed;left:0;right:0;bottom:calc(var(--tab-h) + env(safe-area-inset-bottom,0px));z-index:15;background:var(--bg);border-top:1px solid var(--line);box-shadow:0 -6px 16px rgba(0,0,0,.06);max-height:48vh;overflow-y:auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:10px 12px}
+.dock-in{max-width:528px;margin:0 auto;display:flex;flex-direction:column;gap:8px}
+.dock-h{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:13px;color:var(--sub)}
+.dock-h .btn{padding:7px 12px}
+/* 過去問一覧 */
+.kyear{display:flex;flex-direction:column;gap:6px}
+.ky{font-family:var(--f-text);font-weight:700;font-size:17px}
+.krow{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.kbtn{display:flex;flex-direction:column;align-items:flex-start;gap:2px;border:1px solid var(--line);background:var(--paper);border-radius:12px;padding:12px 14px;text-align:left}
+.kbtn .ks{font-weight:700;font-size:16px}.kbtn .kd{font-size:12px;color:var(--sub)}.kbtn .kb{font-size:12.5px;font-weight:700;color:var(--accent);font-variant-numeric:tabular-nums}
+.kp{margin:0}
+
+/* 今日の学習 */
+.today .big{display:flex;align-items:baseline;gap:8px}
+.today .big b{font-family:var(--f-text);font-size:48px;line-height:1;color:var(--accent);font-variant-numeric:tabular-nums}
+.today .big span{font-size:16px;color:var(--sub)}
+.today .days{font-variant-numeric:tabular-nums;color:var(--ink)}
+.today .go{font-size:16px;padding:15px}
+.tbar{height:6px;border-radius:99px;background:var(--line);overflow:hidden;flex:1;min-width:40px}
+.tbar.lg{height:10px}
+.tbar span{display:block;height:100%;background:var(--ok);border-radius:99px}
+.tb{display:flex;align-items:center;gap:8px;flex:1;font-size:12px;color:var(--sub);white-space:nowrap}
+.hit{background:var(--ok-soft);color:var(--ok);border-radius:10px;padding:10px 12px;font-weight:700;font-size:14px}
+.btn:disabled{opacity:.45;cursor:default}
+
 /* タブ */
 nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--paper);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px);padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px)}
 nav.tabs .in{max-width:560px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr);height:var(--tab-h)}
@@ -424,6 +450,92 @@ const KAKO=[
 ];
 const RESCUE=[["R8","2026","—","—","雇用保険法が2点"],["R7","2025","2点","2点","労災も2点"],["R6","2024","2点","—",""],["R5","2023","—","—",""],["R4","2022","—","—",""],["R3","2021","1点","—","国年も2点"],["R2","2020","2点","2点","健保も2点"],["R1","2019","—","2点",""]];
 
+/* 過去の本試験（選択式）の労一・社一。本文中の [A]〜[E] が空欄。
+   R6〜R8は試験センターの公表問題と同じ空欄・選択肢（four=空欄ごと4択、gogun=20語の語群）。
+   R2・R4・R5は公表正答と出題元から空欄を復元し、選択肢は本アプリで作成した4択。 */
+const KSETS=[
+ {id:"R8-ro",y:"R8",yr:2026,subj:"労一",fmt:"four",src:"公表問題",
+  text:["令和7年障害者雇用状況の集計結果によれば、令和7年6月1日現在の民間企業（常用労働者数40.0人以上）に雇用されている障害者の数は704,610.0人で、実雇用率は14年連続で過去最高の[A]、法定雇用率達成企業の割合は46.0％であった。",
+   "令和7年賃金構造基本統計調査によれば、一般労働者の賃金（男女計）は340.6千円となっている。また、男性を100としてみた男女間賃金格差は[B]であった。",
+   "最高裁判所は、労働組合法7条にいう「使用者」について次のように判示した。「一般に使用者とは労働契約上の雇用主をいうものであるが、同条が団結権の侵害に当たる一定の行為を不当労働行為として排除、是正して[C]ことを目的としていることにかんがみると、雇用主以外の事業主であっても、雇用主から労働者の派遣を受けて自己の業務に従事させ、その労働者の基本的な労働条件等について、雇用主と部分的とはいえ同視できる程度に[D]地位にある場合には、その限りにおいて、右事業主は同条の『使用者』に当たる。」（朝日放送事件）",
+   "育児介護休業法22条の2は、「常時雇用する労働者の数が[E]を超える事業主は、厚生労働省令で定めるところにより、毎年少なくとも1回、その雇用する労働者の育児休業の取得の状況として厚生労働省令で定めるものを公表しなければならない。」と定めている。"],
+  blanks:{A:{ans:"2.41％",opts:["1.82％","2.41％","3.07％","3.69％"]},B:{ans:"76.6",opts:["36.6","56.6","76.6","96.6"]},
+   C:{ans:"正常な労使関係を回復する",opts:["企業秩序の維持を確保する","憲法に定める労働三権を実質的に保障する","個々の労働者と使用者による労働条件の対等決定を実現する","正常な労使関係を回復する"]},
+   D:{ans:"現実的かつ具体的に支配、決定することができる",opts:["影響力を有して労働者との協議に参加する","経営上の関心を持たざるを得ない","現実的かつ具体的に支配、決定することができる","当事者として直接的に関与することを求められる"]},
+   E:{ans:"300人",opts:["50人","100人","300人","1,000人"]}},
+  rel:["s15","s13","c12","l01"]},
+ {id:"R8-sha",y:"R8",yr:2026,subj:"社一",fmt:"gogun",src:"公表問題",
+  text:["令和7年版厚生労働白書によると、「現在の社会保障制度の根拠となっているのは、1947（昭和22）年に施行された日本国憲法である。第[A]条において、『すべて国民は、健康で文化的な最低限度の生活を営む権利を有する（第1項）』、『国は、すべての生活部面について、社会福祉、社会保障及び公衆衛生の向上及び増進に努めなければならない（第2項）』とされ、いわゆる『[B]』が規定されている。」とある。",
+   "「令和6年度厚生年金保険・国民年金事業の概況」によると、令和6年度末において、国民年金保険料の全額免除・猶予者数は592万人であり、第1号被保険者数（任意加入被保険者を除く。）に占める割合（全額免除・猶予割合）は[C]％となっている。",
+   "確定拠出年金法1条では、「この法律は、少子高齢化の進展、[D]等の社会経済情勢の変化にかんがみ、個人又は事業主が拠出した資金を個人が自己の責任において運用の指図を行い、高齢期においてその結果に基づいた給付を受けることができるようにするため、確定拠出年金について必要な事項を定め、国民の高齢期における所得の確保に係る[E]を支援し、もって公的年金の給付と相まって国民の生活の安定と福祉の向上に寄与することを目的とする。」と規定している。"],
+  words:["4.0","24.0","44.0","64.0","13","14","25","27","基本的人権の尊重","幸福追求権","高齢期の価値観の多様化","高齢期の生活の多様化","産業構造の変化","自主的な努力","自助的な活動","事前的な準備","就業形態の変化","生存権","積極的な取組み","平等権"],
+  blanks:{A:{ans:"25"},B:{ans:"生存権"},C:{ans:"44.0"},D:{ans:"高齢期の生活の多様化"},E:{ans:"自主的な努力"}},
+  rel:["l20","s22","l11"]},
+ {id:"R7-ro",y:"R7",yr:2025,subj:"労一",fmt:"gogun",src:"公表問題",
+  text:["総務省「統計からみた我が国の高齢者」（令和6年9月）によれば、65歳以上の就業者を主な産業別にみると、「卸売業、小売業」が132万人と最も多く、次いで「[A]」が107万人で続いている。10年前と比較すると「[A]」は63万人増加し、約2.4倍となった。一方、「[B]」の65歳以上の就業者は10年前と比較して3万人減少している。なお、各産業の就業者に占める65歳以上の割合は「[B]」が52.9％と最も高い。",
+   "労働施策総合推進法30条の2第1項は、「事業主は、職場において行われる優越的な関係を背景とした言動であって、[C]によりその雇用する労働者の就業環境が害されることのないよう、当該労働者からの相談に応じ、適切に対応するために必要な体制の整備その他の雇用管理上必要な措置を講じなければならない。」と定めている。",
+   "最高裁判所は、会社が組合に対し従業員食堂の使用を許諾しない状態が続いたことが不当労働行為に当たるかが争われた事件で、組合による無許可使用は会社の[D]権を無視するものであり正当な組合活動に当たらないとした上で、条件が折り合わないまま食堂の使用を許諾しない状態が続いていることをもって、会社の権利の濫用であると認めるべき特段の事情があるとはいえず、[E]であるとも断じ得ないから、食堂使用の拒否が不当労働行為に当たるということはできない、と判示した。（オリエンタルモーター事件）"],
+  words:["いたずらに組合秩序を混乱させようとしたもの","医療、福祉","運輸業、郵便業","管理監督","客観的に合理的な理由を欠いたもの","業務上必要かつ相当な範囲を超えたもの","組合に対する報復行為を行ったもの","組合の施設利用権限を不利益に変更したもの","組合の弱体化を図ろうとしたもの","建設業","指揮命令","施設管理","宿泊業、飲食サービス業","生活関連サービス業、娯楽業","製造業","通常甘受すべき程度を著しく超えるもの","農業、林業","不動産業、物品賃貸業","利用許諾","労働関係の当事者としての権利を濫用するもの"],
+  blanks:{A:{ans:"医療、福祉"},B:{ans:"農業、林業"},C:{ans:"業務上必要かつ相当な範囲を超えたもの"},D:{ans:"施設管理"},E:{ans:"組合の弱体化を図ろうとしたもの"}},
+  rel:["l02","c21","c23"]},
+ {id:"R7-sha",y:"R7",yr:2025,subj:"社一",fmt:"gogun",src:"公表問題",
+  text:["「令和5年度の国民年金の加入・保険料納付状況」によると、令和5年度の最終納付率（令和3年度分保険料）は、[A]％となっている。",
+   "高齢者医療確保法4条1項では、「[B]は、この法律の趣旨を尊重し、住民の高齢期における医療に要する費用の適正化を図るための取組及び高齢者医療制度の運営が適切かつ円滑に行われるよう所要の施策を実施しなければならない。」と規定している。",
+   "介護保険法2条2項では、「前項の保険給付は、要介護状態等の軽減又は悪化の防止に資するよう行われるとともに、[C]に十分配慮して行われなければならない。」と規定している。",
+   "確定給付企業年金法60条2項では、「[D]は、当該事業年度の末日における給付に要する費用の額の予想額の現価から掛金収入の額の予想額の現価を控除した額を基準として、厚生労働省令で定めるところにより算定した額とする。」と規定している。",
+   "令和6年版厚生労働白書によると、私的年金制度については「[E]」（令和4年11月28日新しい資本主義実現会議決定）において、iDeCoの加入可能年齢を70歳に引き上げること、iDeCoの拠出限度額の引上げ等について2024年の公的年金の財政検証に併せて結論を得ること、iDeCo各種手続きの簡素化等を行うこととされた、とある。"],
+  words:["53.1","68.1","83.1","98.1","医療との連携","国","後期高齢者医療広域連合","最低積立基準額","資産所得倍増プラン","生涯現役計画","所得倍増プラン","事業者又は施設との連携","人生100年計画","責任準備金の額","地方公共団体","積立金の額","積立上限額","被保険者の心身の状況","被保険者の自立した日常生活","保険者"],
+  blanks:{A:{ans:"83.1"},B:{ans:"地方公共団体"},C:{ans:"医療との連携"},D:{ans:"責任準備金の額"},E:{ans:"資産所得倍増プラン"}},
+  rel:["s23","l17","l16"]},
+ {id:"R6-ro",y:"R6",yr:2024,subj:"労一",fmt:"gogun",src:"公表問題",
+  text:["自動車運転者は、他の産業の労働者に比べて長時間労働の実態にあることから、「自動車運転者の労働時間等の改善のための基準」（改善基準告示）において、全ての産業に適用される労働基準法では規制が難しい[A]及び運転時間等の基準を設け、労働条件の改善を図ってきた。過労死等の防止の観点から改善基準告示の見直しが検討され、2022（令和4）年12月にその改正が行われた。（令和5年版厚生労働白書）",
+   "総務省統計局「労働力調査（基本集計）」によると、2022（令和4）年の女性の雇用者数は2,765万人で、雇用者総数に占める女性の割合は[B]である。",
+   "最高裁判所は、労働組合法17条により一の工場事業場の4分の3以上の数の労働者が一の労働協約の適用を受けるに至ったときは、他の同種労働者に対しても労働協約の[C]的効力が及ぶとした上で、協約上の基準が一部の点で未組織の同種労働者の労働条件より不利益とみられる場合でも、そのことだけで効力が及ばないと解するのは相当でないが、当該労働協約を特定の未組織労働者に適用することが[D]と認められる特段の事情があるときは、その効力を当該労働者に及ぼすことはできない、と判示した。（朝日火災海上保険（高田）事件）",
+   "男女雇用機会均等法9条4項本文は、「妊娠中の女性労働者及び出産後[E]を経過しない女性労働者に対してなされた解雇は、無効とする。」と定めている。"],
+  words:["25.8％","35.8％","45.8％","55.8％","30日","8週間","6か月","1年","著しく不合理である","一部の労働者を殊更不利益に取り扱うことを目的としたものである","規範","客観的に合理的な理由を欠き、社会通念上相当でない","強行","拘束時間、休息期間","拘束時間、総実労働時間","債務","直律","手待時間、休息期間","手待時間、総実労働時間","労働協約の目的を逸脱したものである"],
+  blanks:{A:{ans:"拘束時間、休息期間"},B:{ans:"45.8％"},C:{ans:"規範"},D:{ans:"著しく不合理である"},E:{ans:"1年"}},
+  rel:["c22","l03"]},
+ {id:"R6-sha",y:"R6",yr:2024,subj:"社一",fmt:"gogun",src:"公表問題",
+  text:["「2022（令和4）年国民生活基礎調査の概況」によると、公的年金・恩給を受給している高齢者世帯における公的年金・恩給の総所得に占める割合別世帯数の構成割合をみると、公的年金・恩給の総所得に占める割合が[A]の世帯が44.0％となっている。",
+   "「令和3年度介護保険事業状況報告（年報）」によると、令和3年度末において、第1号被保険者のうち要介護又は要支援の認定者は677万人であり、第1号被保険者に占める認定者の割合は全国平均で[B]％となっている。",
+   "国民健康保険法1条では、「この法律は、国民健康保険事業の健全な運営を確保し、もって[C]に寄与することを目的とする。」と規定している。",
+   "高齢者医療確保法1条では、「この法律は、国民の高齢期における適切な医療の確保を図るため、医療費の適正化を推進するための計画の作成及び保険者による健康診査等の実施に関する措置を講ずるとともに、高齢者の医療について、国民の[D]の理念等に基づき、前期高齢者に係る保険者間の[E]の調整、後期高齢者に対する適切な医療の給付等を行うために必要な制度を設け、もって国民保健の向上及び高齢者の福祉の増進を図ることを目的とする。」と規定している。"],
+  words:["3.9","18.9","33.9","48.9","40〜60％未満","60〜80％未満","80〜100％未満","100％","給付費用","給付割合","共助連帯","共同連帯","自助と共助","自助と連帯","社会保険及び国民福祉の向上","社会保険及び国民保健の向上","社会保障及び国民福祉の向上","社会保障及び国民保健の向上","費用負担","負担割合"],
+  blanks:{A:{ans:"100％"},B:{ans:"18.9"},C:{ans:"社会保障及び国民保健の向上"},D:{ans:"共同連帯"},E:{ans:"費用負担"}},
+  rel:["s26","s25","l13","l14"]},
+ {id:"R5-ro",y:"R5",yr:2023,subj:"労一",fmt:"four",src:"復元（4問）",
+  text:["最高裁判所は、採用内定について、[A]ことを考慮するとき、企業からの募集に対し応募したのは労働契約の申込みであり、これに対する採用内定通知は申込みに対する承諾であって、就労の始期を大学卒業直後とし、それまでの間、誓約書記載の採用内定取消事由に基づく解約権を留保した労働契約が成立したと解するのが相当であるとした。また、採用内定の取消事由は、採用内定当時[B]、これを理由として採用内定を取り消すことが解約権留保の趣旨、目的に照らして客観的に合理的と認められ社会通念上相当として是認することができるものに限られる、と判示した。（大日本印刷事件）",
+   "労働者派遣法35条の3は、派遣元事業主は、派遣先の事業所その他派遣就業の場所における組織単位ごとの業務について、[C]年を超える期間継続して同一の派遣労働者に係る労働者派遣を行ってはならない、と定めている。",
+   "最低賃金法7条は、使用者が[E]の許可を受けたときは、精神又は身体の障害により著しく労働能力の低い者等について、最低賃金額から一定の率を乗じて得た額を減額した額により最低賃金の効力についての規定を適用する、と定めている。"],
+  blanks:{A:{ans:"本件採用内定通知のほかには労働契約締結のための特段の意思表示をすることが予定されていなかった",opts:["本件採用内定通知のほかには労働契約締結のための特段の意思表示をすることが予定されていなかった","採用内定通知に労働条件が具体的に明示されていた","内定者が他社の内定を辞退していた","入社前研修への参加が義務付けられていた"]},
+   B:{ans:"知ることができず、また知ることが期待できないような事実であって",opts:["知ることができず、また知ることが期待できないような事実であって","既に判明していた事実であって","当事者双方が予見し得た事実であって","容易に調査し得た事実であって"]},
+   C:{ans:"3",opts:["1","3","5","10"]},
+   E:{ans:"都道府県労働局長",opts:["厚生労働大臣","都道府県労働局長","労働基準監督署長","都道府県知事"]}},
+  rel:["c26"]},
+ {id:"R4-ro",y:"R4",yr:2022,subj:"労一",fmt:"four",src:"復元",
+  text:["障害者雇用促進法施行令により、一般事業主（民間企業）の障害者雇用率は、令和3年3月1日から[A]％とされた。",
+   "障害者雇用納付金の徴収の対象は、当分の間、常時雇用する労働者の数が[B]の事業主とされている。",
+   "障害者が職場に適応できるよう、障害者職業カウンセラーが策定した支援計画に基づき[C]が職場に出向いて、障害者及び事業主に対して直接支援を行っている。（令和3年版厚生労働白書）",
+   "最高裁判所は、5回にわたり契約が更新された臨時員について、その雇用関係はある程度の[D]ものであり、このような労働者を契約期間満了によって雇止めにするに当たっては、解雇に関する法理が類推され、雇止めが無効とされる場合には、期間満了後における使用者と労働者間の法律関係は[E]のと同様の法律関係となる、と判示した。（日立メディコ事件）"],
+  blanks:{A:{ans:"2.3",opts:["2.0","2.2","2.3","2.5"]},B:{ans:"100人超",opts:["50人超","100人超","200人超","300人超"]},
+   C:{ans:"ジョブコーチ",opts:["ジョブコーチ","キャリアコンサルタント","ハローワーク職員","産業医"]},
+   D:{ans:"継続が期待されていた",opts:["継続が期待されていた","終身雇用が予定されていた","更新が約束されていた","正社員への転換が予定されていた"]},
+   E:{ans:"従前の労働契約が更新された",opts:["期間の定めのない労働契約に転換された","従前の労働契約が更新された","新たな労働契約が締結された","労働契約が終了した"]}},
+  rel:["l05","c27"]},
+ {id:"R2-ro",y:"R2",yr:2020,subj:"労一",fmt:"four",src:"復元",
+  text:["年齢階級別の離職率を知るための統計調査は[A]である。",
+   "年次有給休暇の取得率を知るための統計調査は[B]である。",
+   "男性の育児休業取得率を知るための統計調査は[C]である。",
+   "世帯を対象として毎月実施され、毎月末日を含む1週間の15歳以上人口の就業状態を調べる統計調査は[D]である。",
+   "世帯を対象として5年ごとに実施され、有業者の1週間当たりの就業時間などを調べる統計調査は[E]である。"],
+  blanks:{A:{ans:"雇用動向調査",opts:["雇用動向調査","毎月勤労統計調査","労働力調査","賃金構造基本統計調査"]},
+   B:{ans:"就労条件総合調査",opts:["就労条件総合調査","雇用均等基本調査","労働経済動向調査","賃金構造基本統計調査"]},
+   C:{ans:"雇用均等基本調査",opts:["就労条件総合調査","雇用均等基本調査","国民生活基礎調査","雇用動向調査"]},
+   D:{ans:"労働力調査",opts:["就業構造基本調査","労働力調査","毎月勤労統計調査","国勢調査"]},
+   E:{ans:"就業構造基本調査",opts:["労働力調査","国勢調査","就業構造基本調査","社会生活基本調査"]}},
+  rel:["s01","s06","s07"]}
+];
+
 /* ===== 保存 ===== */
 const S={get(k,d){try{const v=localStorage.getItem("srh_"+k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem("srh_"+k,JSON.stringify(v))}catch(e){}}};
 let progress=S.get("progress",{});
@@ -459,7 +571,15 @@ function optionsFor(b,card){
   while(set.length<4&&pool.length)set.push(pool.pop());
   return shuffle([...new Set(set)].slice(0,4))}
 function prog(id){return progress[id]||{box:0,due:null}}
-function record(id,ok){const p=prog(id);p.box=ok?Math.min(p.box+1,5):1;p.due=addDays(INTERVALS[p.box]);p.last=today();progress[id]=p;S.set("progress",progress)}
+function record(id,ok){const p=prog(id);p.box=ok?Math.min(p.box+1,5):1;p.due=addDays(INTERVALS[p.box]);p.last=today();progress[id]=p;S.set("progress",progress);return bump(1)}
+/* 1日の解答数と連続日数。目標に届いた瞬間だけ true を返す */
+let log=S.get("log",{});let goal=S.get("goal",10);
+function todayCount(){return log[today()]||0}
+function bump(n){const t=today(),before=log[t]||0;log[t]=before+n;S.set("log",log);return before<goal&&log[t]>=goal}
+function streak(){const d=new Date();let c=0;if(!log[ymd(d)])d.setDate(d.getDate()-1);while(log[ymd(d)]){c++;d.setDate(d.getDate()-1)}return c}
+function todayBar(){const n=todayCount(),p=Math.min(100,Math.round(n/goal*100));return `<div class="tb"><div class="tbar"><span style="width:${p}%"></span></div><span>今日 <b>${n}</b>/${goal}問</span></div>`}
+function weakCards(){return allCards().filter(c=>progress[c.id]&&progress[c.id].box===1)}
+function startToday(){const need=Math.max(goal-todayCount(),5);startDrill(nextBatch([],need))}
 function dueCards(){const t=today();return allCards().filter(c=>{const p=progress[c.id];return p&&p.due&&p.due<=t})}
 function chips(c){let h="";
   if(c.prio)h+=`<span class="chip ${c.prio==="S"?"seal":c.prio==="B"?"ok":""}">優先${c.prio}</span> `;
@@ -474,9 +594,10 @@ let tab="home";let session=null;
 
 function renderTabs(){$("#tabs").innerHTML=TABS.map(([k,ic,l])=>`<button class="${tab===k?"on":""}" data-tab="${k}" aria-current="${tab===k?"page":"false"}"><span class="ic">${ic}</span>${l}</button>`).join("")}
 function go(t){tab=t;session=null;try{history.replaceState(null,"","#"+t)}catch(e){}render();window.scrollTo(0,0)}
-function render(){renderTabs();const f={home:viewHome,kako:viewKako,case:()=>viewList("case"),stat:()=>viewList("stat"),exam:viewExam}[tab];
+function render(){renderTabs();$("#main").style.paddingBottom="";const f={home:viewHome,kako:viewKako,case:()=>viewList("case"),stat:()=>viewList("stat"),exam:viewExam}[tab];
   if(session&&session.kind==="drill")return viewDrill();
   if(session&&session.kind==="dir")return viewDir();
+  if(session&&session.kind==="kako")return viewKakoSolve();
   f()}
 
 /* --- ホーム --- */
@@ -487,77 +608,47 @@ function viewHome(){
   const total=t=>allCards().filter(c=>c.type===t).length;
   const now=new Date();const ym=now.getFullYear()*12+now.getMonth();
   const phase=(a,b)=>ym>=a&&ym<=b?"t now":"t";
+  const n=todayCount(),hit=n>=goal,weak=weakCards().length,st=streak();
+  const label=hit?"目標達成。さらに解く":n?`続きを解く（あと${goal-n}問）`:(due?`今日の${goal}問を始める（復習${due}問を含む）`:`今日の${goal}問を始める`);
   $("#main").innerHTML=`<div class="stack">
-   <section class="panel count">
-     <div class="num">${days}<small>日</small></div>
-     <div><h2>2027年 本試験まで</h2><p class="muted">8月22日（日）で仮置き。例年8月第4日曜で、正式な日程は試験センターの公表後に確認。</p></div>
+   <section class="panel stack today">
+     <div class="row" style="justify-content:space-between"><span class="eyebrow">今日の学習</span><span class="muted">本試験まで <b class="days">${days}</b>日</span></div>
+     <div class="big"><b>${n}</b><span>/ ${goal}問</span>${hit?'<span class="stamp ok">達成</span>':""}</div>
+     <div class="tbar lg"><span style="width:${Math.min(100,Math.round(n/goal*100))}%"></span></div>
+     <div class="row muted"><span>連続 <b>${st}</b>日</span><span>・</span><span>これまで <b>${Object.values(log).reduce((a,b)=>a+b,0)}</b>問</span></div>
+     <button class="btn primary block go" id="go-today">${label}</button>
+     <div class="krow">
+       <button class="btn" id="go-kako">過去問を1回分解く</button>
+       <button class="btn" id="go-weak" ${weak?"":"disabled"}>苦手を復習（${weak}問）</button>
+     </div>
    </section>
-   <button class="btn primary block" id="go-due">${due?`今日の復習 ${due}枚を始める`:"今日の復習はありません。新しいカードを解く"}</button>
    <div class="meter">
-     <div><b>${learned("case")}/${total("case")}</b><span>判例 定着</span></div>
-     <div><b>${learned("stat")}/${total("stat")}</b><span>統計 定着</span></div>
-     <div><b>${learned("law")}/${total("law")}</b><span>条文 定着</span></div>
+     <div><b>${learned("case")}/${total("case")}</b><span>判例</span></div>
+     <div><b>${learned("law")}/${total("law")}</b><span>条文</span></div>
+     <div><b>${learned("stat")}/${total("stat")}</b><span>統計</span></div>
    </div>
-   <div class="note">統計カードは<b>2026年10月22日時点で公表済みの最新値</b>（主に2025年の数値）と、令和8年版の厚生労働白書・労働経済白書（2026年9月29日公表）のテーマです。試験までに新しく公表される数値は、公表され次第アプリ側で差し替えます（公表予定はガイド2）。</div>
+   <p class="muted" style="margin-top:-6px">数字は「3回続けて正解したカード」の数。間違えたカードは翌日、正解したカードは1日後→3日後→7日後…と間隔をあけて出ます。</p>
+   <div class="row"><span class="muted">1日の目標</span><div class="seg" style="flex:1">${[5,10,20,30].map(g=>`<button class="${goal===g?"on":""}" data-g="${g}">${g}問</button>`).join("")}</div></div>
 
-   <section class="panel stack">
-     <div class="eyebrow">過去問から分かったこと</div>
-     <h2>労一は「統計2・判例2・法令1」の型が3年続いている</h2>
-     <p>令和8年の本試験の労一では、空欄5つのうち2つ（障害者の実雇用率2.41％、男女間賃金格差76.6）が試験直前に公表された統計の数値でした。さらに2つは朝日放送事件の判旨、残る1つは育介法の「300人」です。社一は企業年金・目的条文・社会保障統計が毎年の定番です。</p>
-     <button class="btn block" id="go-kako">過去問の分析と2027年の予想を見る</button>
-   </section>
-
-   <h2 style="margin-top:6px">学習法：「どこから出るか分からない」への答え</h2>
-   <details class="guide" open><summary>1. 実は、出題元はかなり絞れる</summary><div class="body">
-     <p>白書・判例が出るのは主に<b>「労務管理その他の労働に関する一般常識（労一）」</b>と<b>「社会保険に関する一般常識（社一）」</b>です。判例は労働基準法・労働契約法の分野でも出ます。</p>
-     <p>出題範囲は広く見えますが、出題元は次の範囲にほぼ収まります。</p>
-     <ul>
-       <li><b>白書</b>：厚生労働白書、労働経済の分析（労働経済白書）が中心。ほかに高齢社会白書、こども白書（旧 少子化社会対策白書）、男女共同参画白書、過労死等防止対策白書</li>
-       <li><b>統計</b>：労働力調査、一般職業紹介状況、就労条件総合調査、賃金構造基本統計調査、雇用均等基本調査、労働組合基礎調査、人口動態統計など10本前後</li>
-       <li><b>判例</b>：最高裁判例のうち、テキストに載る30〜40件。穴になるのはその中の<b>「規範」部分（決まり文句）</b>だけ</li>
-     </ul>
-     <p>白書の文章を丸暗記する必要はありません。<b>数字は「方向と桁」、判例は「決まり文句」</b>を押さえれば対応できます。</p>
+   <details class="guide"><summary>学習法と2027年の出題予想</summary><div class="body">
+     <p><b>出題元は絞れる。</b>労一は令和6〜8年の3年続けて「統計2・判例2・法令1」。判例は5年連続、最近は労働組合法。統計は試験直前に公表された最新値。社一は企業年金・目的条文・社会保障統計が毎年の定番。</p>
+     <p><b>数字は方向と水準で覚える。</b>本試験の4択の数字は36.6／56.6／76.6／96.6のように等間隔に並ぶ。「7割台後半」「2％台半ば」と覚えていれば1つに決まる。</p>
+     <p><b>判例は決まり文句で選ぶ。</b>「社会通念上」「客観的に」「特段の事情」「自由な意思」「現実的かつ具体的に」は判決文の定番。</p>
+     <p><b>3点を取りにいく。</b>選択式は1科目3点以上が基準。救済をあてにせず、知らない問題でも語群の仕分けと文脈で2択まで絞る。</p>
+     <p><b>白書・統計の更新。</b>統計は2026年10月22日時点の最新値、白書は令和8年版（2026年9月29日公表）を収録。試験までに公表される数値（2026年12月〜2027年3月）はアプリ側で差し替える。</p>
+     <div class="timeline">
+       <div class="${phase(2026*12+9,2026*12+11)}"><div class="when">2026年<br>10〜12月</div><div>判例・条文の優先Sを固める。</div></div>
+       <div class="${phase(2027*12+0,2027*12+2)}"><div class="when">2027年<br>1〜3月</div><div>統計の方向ドリルと、差し替わった最新値の確認。</div></div>
+       <div class="${phase(2027*12+3,2027*12+5)}"><div class="when">4〜6月</div><div>過去問を年度ごとに解き、間違えた分野のカードを復習。</div></div>
+       <div class="${phase(2027*12+6,2027*12+7)}"><div class="when">7〜8月</div><div>「選択式」で本試験形式を毎日1回。3点以上が安定するかを見る。</div></div>
+     </div>
+     <p class="muted">学習記録はこの端末のブラウザにだけ保存されます。</p>
    </div></details>
-
-   <details class="guide"><summary>2. 2027年試験で何が対象になるか</summary><div class="body">
-     <ul>
-       <li><b>白書</b>：令和8年版（2026年9月29日公表）が本命。厚生労働白書は「これからの医療・介護・福祉の現場で働くことを考える」、労働経済白書は「AI等技術革新が進む中での労働市場の現状と課題」。どちらもAI・生産性がキーワード。令和7年版も範囲に入る</li>
-       <li><b>統計</b>：このアプリには2025年の数値を収録済み。ただし試験までにさらに新しい数値が出る。目安は、労働組合基礎調査・就労条件総合調査・障害者／高年齢者の雇用状況が2026年12月頃、労働力調査・一般職業紹介状況の2026年平均と外国人雇用状況が2027年1月末頃、賃金構造基本統計調査が2027年3月頃。公表され次第、このアプリの数値を差し替える</li>
-       <li><b>判例</b>：古い有名判例は毎年使える。加えて令和5〜6年の最高裁判例（名古屋自動車学校、滋賀県社会福祉協議会、協同組合グローブなど）は新しく出題されやすい</li>
-       <li><b>白書に書かれる制度改正</b>：2025年成立の年金制度改正法（短時間労働者への適用拡大など）、育児・介護休業法改正、障害者の法定雇用率の引上げ（2026年7月に2.7%）など</li>
-     </ul>
-   </div></details>
-
-   <details class="guide"><summary>3. 知らない問題でも3点を取る解き方</summary><div class="body">
-     <p>選択式は1科目5つの空欄を埋め、<b>3点以上</b>が基準です。令和8年は労一が空欄ごとの4択、社一が20語の語群でした。労一は8年で4回救済されていますが、令和8年は救済がありませんでした。満点ではなく、確実に3つ取りにいきます。</p>
-     <ol>
-       <li><b>語群を先に仕分ける</b>：20語を「数字」「％」「名詞」「状態語（上昇・低下）」に分けると、各空欄の候補は実質4〜5語になる</li>
-       <li><b>数字は方向と水準で絞る</b>：本試験の4択の数字は36.6／56.6／76.6／96.6のように等間隔に並ぶ。「7割台後半」「2％台半ば」と覚えていれば1つに決まる</li>
-       <li><b>判例は決まり文句で選ぶ</b>：「社会通念上」「合理的」「客観的に」「特段の事情」「総合考慮」「自由な意思」は判決文の定番</li>
-       <li><b>白書は行政の文体で選ぶ</b>：「〜が求められる」「〜を推進」。極端な語（必ず・全て・著しく増加）は外れやすい</li>
-       <li><b>空欄どうしの整合性を見る</b>：同じ問題の中で文脈が矛盾しない組合せを選ぶ</li>
-     </ol>
-   </div></details>
-
-   <details class="guide"><summary>4. 2027年8月までの学習カレンダー</summary><div class="body"><div class="timeline">
-     <div class="${phase(2026*12+9,2026*12+11)}"><div class="when">2026年<br>10〜12月</div><div>判例・条文の「優先S」から固める。特に労働組合法の判例と社一の目的条文は、年度が変わっても使える。1日5枚。</div></div>
-     <div class="${phase(2027*12+0,2027*12+2)}"><div class="when">2027年<br>1〜3月</div><div>統計の「方向と桁」を方向ドリルで固める。1月末に公表される2026年平均の労働力調査・有効求人倍率などは、公表後にアプリへ反映する。</div></div>
-     <div class="${phase(2027*12+3,2027*12+5)}"><div class="when">4〜6月</div><div>令和8年版の厚生労働白書・労働経済白書の第1部テーマと要約を読む。予備校の白書・統計対策本（例年春〜初夏に出る）で印のついた文を、1日2〜3文ずつ穴埋めカードにする。</div></div>
-     <div class="${phase(2027*12+6,2027*12+7)}"><div class="when">7〜8月</div><div>「選択式」タブで本試験形式の演習を毎日1回。3点以上が安定して取れるかを見る。</div></div>
-   </div></div></details>
-
-   <details class="guide"><summary>5. このアプリの1日10分の使い方</summary><div class="body"><ol>
-     <li>ホームの「今日の復習」を消化する（間隔をあけて繰り返し出題）</li>
-     <li>「白書・統計」で方向ドリルを1周（上昇か低下かを即答できるようにする）</li>
-     <li>週末に「選択式」で本試験形式を1回</li>
-   </ol>
-   <p class="muted">学習記録はこの端末のブラウザにだけ保存されます。</p></div></details>
   </div>`;
-  $("#go-kako").onclick=()=>go("kako");
-  $("#go-due").onclick=()=>{let ids=dueCards().map(c=>c.id);
-    if(!ids.length)ids=shuffle(allCards().filter(c=>!progress[c.id])).sort(byPrio).map(c=>c.id).slice(0,5);
-    if(!ids.length)ids=shuffle(allCards().map(c=>c.id)).slice(0,5);
-    startDrill(ids)}
+  $("#go-today").onclick=startToday;
+  $("#go-kako").onclick=()=>{const k=KSETS.find(x=>kbest[x.id]===undefined)||KSETS[Math.floor(Math.random()*KSETS.length)];session={kind:"kako",set:k,fill:{},active:"A",graded:false};render();window.scrollTo(0,0)};
+  $("#go-weak").onclick=()=>startDrill(shuffle(weakCards().map(c=>c.id)));
+  document.querySelectorAll("[data-g]").forEach(b=>b.onclick=()=>{goal=+b.dataset.g;S.set("goal",goal);viewHome()});
 }
 
 /* --- 一覧 --- */
@@ -572,7 +663,7 @@ function viewList(type){
     <div class="list">${cards.map(c=>{const p=prog(c.id);
       return `<button class="item" data-id="${c.id}"><span class="t">${esc(c.title)}</span><span>${dots(p.box)}</span><span class="m">${esc(c.meta||"")}<br>${chips(c)}</span></button>`}).join("")}</div>
   </div>`;
-  document.querySelectorAll(".item").forEach(b=>b.onclick=()=>startDrill([b.dataset.id]));
+  document.querySelectorAll(".item").forEach(b=>b.onclick=()=>{const i=cards.findIndex(c=>c.id===b.dataset.id);startDrill(cards.slice(i).map(c=>c.id))});
   $("#all").onclick=()=>startDrill(cards.map(c=>c.id));
   $("#topS").onclick=()=>startDrill(shuffle(cards.filter(c=>c.prio==="S").map(c=>c.id)));
   if(isStat)$("#dir").onclick=startDir;
@@ -580,6 +671,12 @@ function viewList(type){
 }
 
 /* --- カード演習 --- */
+function nextBatch(recent,size=5){
+  const t=today(),all=allCards().filter(c=>!recent.includes(c.id));
+  const due=all.filter(c=>progress[c.id]&&progress[c.id].due<=t);
+  const fresh=all.filter(c=>!progress[c.id]).sort(byPrio);
+  const weak=shuffle(all).sort((a,b)=>prog(a.id).box-prog(b.id).box);
+  return [...new Set([...due,...fresh,...weak].map(c=>c.id))].slice(0,size)}
 function startDrill(ids){session={kind:"drill",ids,idx:0,ans:{},active:0,okCount:0};render();window.scrollTo(0,0)}
 function viewDrill(){
   const s=session;const card=byId(s.ids[s.idx]);if(!card){session=null;return render()}
@@ -592,34 +689,37 @@ function viewDrill(){
     return a===p.ans?`<span class="blank right">${esc(a)}</span>`:`<span class="blank wrong">${esc(a)}<span class="fix">正：${esc(p.ans)}</span></span>`}).join("");
   const typeChip=chips(card);
   $("#main").innerHTML=`<div class="stack">
-    <div class="row" style="justify-content:space-between"><span class="eyebrow">${TYPE_LABEL[card.type]}　${s.idx+1} / ${s.ids.length}</span><button class="btn ghost" id="quit">終了</button></div>
+    <div class="row" style="justify-content:space-between"><span class="eyebrow">${TYPE_LABEL[card.type]}</span>${todayBar()}<button class="btn ghost" id="quit">やめる</button></div>
     <div class="panel stack">
       <div><h2>${esc(card.title)}</h2><div class="row muted">${esc(card.meta||"")} ${typeChip}</div></div>
       <div class="passage">${html}</div>
     </div>
     ${done?`<div class="panel stack">
         <div class="row">${blanks.every((b,i)=>s.ans[i]===b.ans)?'<span class="stamp ok">正解</span>':'<span class="stamp">要復習</span>'}<span class="muted">次回：${INTERVALS[prog(card.id).box]}日後</span></div>
+        ${s.hit?`<p class="hit">今日の目標 ${goal}問 達成。このまま続けても、ここでやめてもOK。</p>`:""}
         ${card.point?`<p class="point">${esc(card.point)}</p>`:""}
         ${card.src?`<a class="muted" href="${esc(card.src)}" target="_blank" rel="noopener">出典を開く</a>`:""}
       </div>
-      <button class="btn primary block" id="next">${s.idx+1<s.ids.length?"次へ":"終わる"}</button>`
-    :`<div class="stack"><p class="muted">空欄（${MARK[s.active]}）に入る語を選ぶ</p><div class="opts">${s.opts[s.active].map(o=>`<button class="opt" data-o="${esc(o)}">${esc(o)}</button>`).join("")}</div></div>`}
+      <button class="btn primary block" id="next">次の問題へ</button>`
+    :dock(`<div class="dock-h"><span>空欄（${MARK[s.active]}）に入る語</span></div><div class="opts">${s.opts[s.active].map(o=>`<button class="opt" data-o="${esc(o)}">${esc(o)}</button>`).join("")}</div>`)}
   </div>`;
   $("#quit").onclick=()=>{session=null;render()};
   document.querySelectorAll(".blank[data-b]").forEach(b=>b.onclick=()=>{s.active=+b.dataset.b;viewDrill()});
   document.querySelectorAll(".opt[data-o]").forEach(b=>b.onclick=()=>{
     s.ans[s.active]=b.dataset.o;
     const next=blanks.findIndex((_,i)=>s.ans[i]===undefined);
-    if(next<0){record(card.id,blanks.every((bb,i)=>s.ans[i]===bb.ans))}else s.active=next;
+    if(next<0){s.hit=record(card.id,blanks.every((bb,i)=>s.ans[i]===bb.ans))}else s.active=next;
     viewDrill()});
-  if(done){$("#next").onclick=()=>{if(s.idx+1<s.ids.length){s.idx++;s.ans={};s.active=0;s.opts=null;viewDrill();window.scrollTo(0,0)}else{session=null;toast("おつかれさまでした");render()}}}
+  if(done){$("#next").onclick=()=>{if(s.idx+1>=s.ids.length)s.ids=s.ids.concat(nextBatch(s.ids.slice(-5)));
+    s.idx++;s.ans={};s.active=0;s.opts=null;s.hit=false;viewDrill();window.scrollTo(0,0)}}
+  fitDock();
 }
 
 /* --- 方向ドリル --- */
 function startDir(){const ids=shuffle(STATS.filter(s=>s.trend).map(s=>s.id));session={kind:"dir",ids,idx:0,pick:null,ok:0};render();window.scrollTo(0,0)}
 function viewDir(){
   const s=session;if(s.idx>=s.ids.length){
-    $("#main").innerHTML=`<div class="stack"><div class="panel result"><span class="score">${s.ok}/${s.ids.length}</span><span class="muted">方向ドリルの結果</span></div><button class="btn primary block" id="again">もう一度</button><button class="btn block" id="back">一覧へ戻る</button></div>`;
+    $("#main").innerHTML=`<div class="stack"><div class="panel result"><span class="score">${s.ok}/${s.ids.length}</span><span class="muted">方向ドリルの結果</span></div><button class="btn primary block" id="again">もう一周する</button><button class="btn block" id="back">統計の一覧へ</button></div>`;
     $("#again").onclick=startDir;$("#back").onclick=()=>{session=null;render()};return}
   const c=byId(s.ids[s.idx]);const filled=parse(c.text).map(p=>p.t==="s"?p.v:p.ans).join("");
   $("#main").innerHTML=`<div class="stack">
@@ -629,7 +729,7 @@ function viewDir(){
     ${s.pick?`<div class="panel stack"><p class="passage" style="font-size:15px;line-height:1.9">${esc(filled)}</p><p class="point">${esc(c.point)}</p></div><button class="btn primary block" id="next">次へ</button>`:""}
   </div>`;
   $("#quit").onclick=()=>{session=null;render()};
-  document.querySelectorAll(".opt[data-d]").forEach(b=>b.onclick=()=>{s.pick=b.dataset.d;if(s.pick===c.trend)s.ok++;viewDir()});
+  document.querySelectorAll(".opt[data-d]").forEach(b=>b.onclick=()=>{s.pick=b.dataset.d;if(s.pick===c.trend)s.ok++;bump(1);viewDir()});
   if(s.pick)$("#next").onclick=()=>{s.idx++;s.pick=null;viewDir();window.scrollTo(0,0)};
 }
 
@@ -681,9 +781,7 @@ function viewExam(){
     ${e.graded?`<div class="panel stack"><div class="result"><span class="score">${score}/5</span>${score>=3?'<span class="stamp ok">基準点クリア</span>':'<span class="stamp">基準点に届かず</span>'}</div>
        <p class="muted">間違えた空欄の元カードは「要復習」として、次回の復習に回しました。</p></div>
        <button class="btn primary block" id="new">次の問題</button>`
-     :`<p class="muted">空欄 <b>${L[e.active]}</b> を選択中。${examFmt==="four"?"4つの中から選ぶ":"語群から選ぶ（もう一度押すと外れる）"}</p>
-       ${choices}
-       <button class="btn primary block" id="grade">採点する</button>`}
+     :dock(`<div class="dock-h"><span>空欄 <b>${L[e.active]}</b> に入る語</span><button class="btn primary" id="grade">採点する</button></div>${choices}`)}
   </div>`;
   $("#reset").onclick=()=>{exam=null;viewExam()};
   document.querySelectorAll(".blank[data-k]").forEach(b=>b.onclick=()=>{e.active=+b.dataset.k;viewExam()});
@@ -692,69 +790,75 @@ function viewExam(){
     const next=e.blanks.find(bb=>e.fill[bb.k]===undefined);if(next&&e.fill[e.active]!==undefined)e.active=next.k;viewExam()});
   if(e.graded)$("#new").onclick=()=>{exam=buildExam();viewExam();window.scrollTo(0,0)};
   else $("#grade").onclick=()=>{e.graded=true;e.passages.forEach(ps=>{const ok=ps.segs.filter(sg=>sg.t==="b").every(sg=>e.fill[sg.k]===sg.ans);record(ps.card.id,ok)});viewExam();window.scrollTo(0,0)};
+  fitDock();
 }
 
-/* --- 過去問分析 --- */
+/* --- 過去問 --- */
+let kbest=S.get("kbest",{});
 function viewKako(){
-  const CAT={"統計":"seal","白書":"warn","判例":"","法令":"ok"};
-  const count=(key,yrs)=>{const c={統計:0,白書:0,判例:0,法令:0};KAKO.filter(k=>k[key]&&(!yrs||yrs.includes(k.y))).forEach(k=>k[key].forEach(r=>c[r[2]]++));return c};
-  const bar=c=>{const tot=Object.values(c).reduce((a,b)=>a+b,0);return `<div class="bar" role="img" aria-label="${Object.entries(c).map(([k,v])=>k+v).join("、")}">${Object.entries(c).filter(([,v])=>v).map(([k,v])=>`<span class="b-${CAT[k]||"acc"}" style="flex:${v}">${k} ${v}</span>`).join("")}</div><p class="muted">${tot}空欄の内訳</p>`};
-  const row=(y,list)=>list?`<div class="kq">${list.map(r=>`<div class="kr"><b>${r[0]}</b><span class="chip ${CAT[r[2]]}">${r[2]}</span><div class="kt"><div>${esc(r[1])}</div><div class="muted">${esc(r[3])}</div></div></div>`).join("")}</div>`:`<p class="muted">（未収録）</p>`;
+  const years=[...new Set(KSETS.map(k=>k.y))];
+  const btn=k=>{const b=kbest[k.id];return `<button class="kbtn" data-k="${k.id}"><span class="ks">${k.subj}</span><span class="kd">${k.fmt==="four"?"4択":"語群20"}${k.src==="公表問題"?"":"・"+k.src}</span><span class="kb">${b===undefined?"未挑戦":"最高 "+b+"/"+Object.keys(k.blanks).length}</span></button>`};
   $("#main").innerHTML=`<div class="stack">
-    <h2>過去問の分析：選択式の労一・社一</h2>
-    <p class="muted">令和2〜8年の本試験について、空欄ごとに出題元を分類しました。試験センターが公表した問題・正答と、予備校の解答速報で確かめています。</p>
-
-    <section class="panel stack">
-      <h3>労一は3年続けて「統計2・判例2・法令1」の型</h3>
-      ${bar(count("ro",["R6","R7","R8"]))}
+    <h2>過去問を解く</h2>
+    <p class="muted">本試験の選択式（労一・社一）。令和6〜8年は本試験と同じ空欄・選択肢です。</p>
+    ${years.map(y=>{const ks=KSETS.filter(k=>k.y===y);return `<section class="kyear"><div class="ky">${y}<span class="muted">（${ks[0].yr}年）</span></div><div class="krow">${ks.map(btn).join("")}</div></section>`}).join("")}
+    <details class="guide"><summary>出題の傾向（まとめ）</summary><div class="body">
       <ul class="ul">
-        <li><b>判例は5年連続</b>（R4〜R8）。毎年1つの判例から空欄2つ。R6〜R8は3年続けて<b>労働組合法</b>の判例（労働協約の拡張適用→施設管理→使用者性）。</li>
-        <li><b>統計は試験直前の最新値</b>。R8は2025年12月公表の障害者雇用状況と2026年3月公表の賃金構造基本統計調査。4択の数字は36.6／56.6／76.6／96.6のように等間隔なので、おおよその水準を知っていれば選べる。</li>
-        <li><b>法令は「規模要件・期間」の数字</b>。R8は育介法の300人、R6は均等法の1年、R4は障害者雇用の100人超。<b>改正で数字が変わった直後</b>に出る。</li>
+        <li><b>労一</b>：R6〜R8は「統計2・判例2・法令1」。判例は5年連続、R6〜R8は労働組合法。統計は試験直前の最新値。</li>
+        <li><b>社一</b>：企業年金が6年で5回、目的条文が3年連続、社会保障統計が毎年。</li>
+        <li><b>救済</b>：労一は8年で4回、社一は3回。R8はどちらも救済なし。</li>
       </ul>
-    </section>
-
-    <section class="panel stack">
-      <h3>社一は「目的条文」と「企業年金」と「社会保障統計」</h3>
-      ${bar(count("sha"))}
-      <ul class="ul">
-        <li><b>企業年金（確定給付・確定拠出）は6年で5回</b>（R3・R4・R5・R7・R8）。ほぼ毎年1〜2空欄。</li>
-        <li><b>目的条文・理念条文が3年連続</b>（R6 国保法1条・高確法1条、R7 介保法2条・高確法4条、R8 確拠法1条）。</li>
-        <li><b>社会保障統計が毎年1〜2空欄</b>（国民医療費、国民生活基礎調査、介護保険事業状況報告、国民年金の納付率・免除割合）。国民年金はR7・R8と2年連続。</li>
-        <li><b>前年版の厚生労働白書</b>がR5・R7・R8で出題。R8は令和7年版の総論（憲法25条・生存権）だった。</li>
-      </ul>
-    </section>
-
-    <section class="panel stack">
-      <h3>2027年（第59回）の予想と対策</h3>
-      <ol class="ul">
-        <li><b>労一の判例</b>：労組法の流れが続くなら、国鉄札幌運転区・三井倉庫港運・東芝労組小向支部。流れが変わるなら、雇止め・採用内定・就業規則などの労働契約法の判例。どちらも「優先S・A」に入れた。</li>
-        <li><b>労一の統計</b>：2026年12月〜2027年3月に公表される最新値（障害者雇用状況、賃金構造基本統計調査、労働力調査の2026年平均など）。公表され次第、アプリの数値を差し替える。</li>
-        <li><b>労一の法令</b>：2026年4月施行の改正女性活躍推進法（101人以上の公表義務）、2026年7月の法定雇用率2.7％。</li>
-        <li><b>社一</b>：確定給付企業年金法1条（確拠の翌年）、介護保険法1条、令和8年版厚生労働白書（医療・介護・福祉の現場）、国民年金の納付率。</li>
-      </ol>
-      <button class="btn primary block" id="goS">優先Sのカードを解く</button>
-    </section>
-
-    <section class="panel stack">
-      <h3>基準点の救済（引き下げ）の記録</h3>
-      <div class="tbl"><table><thead><tr><th>年度</th><th>労一</th><th>社一</th><th>他の科目</th></tr></thead><tbody>
-      ${RESCUE.map(r=>`<tr><td>${r[0]}<span class="muted">（${r[1]}）</span></td><td>${r[2]}</td><td>${r[3]}</td><td class="muted">${r[4]}</td></tr>`).join("")}
+      <div class="tbl"><table><thead><tr><th>年度</th><th>労一</th><th>社一</th></tr></thead><tbody>
+      ${KAKO.map(k=>`<tr><td>${k.y}</td><td>${k.ro.map(r=>r[2]).join("・")}</td><td>${k.sha?k.sha.map(r=>r[2]).join("・"):"—"}</td></tr>`).join("")}
       </tbody></table></div>
-      <p class="muted">R1〜R8の8年で、労一は4回、社一は3回救済されている。ただしR8はどちらも救済なし（平均点 労一2.8点・社一2.4点）。救済をあてにせず3点を取りにいく。</p>
-    </section>
-
-    <h3>年度別の出題元</h3>
-    ${KAKO.map(k=>`<details class="guide"${k.y==="R8"?" open":""}><summary>${k.y}（${k.yr}年）</summary><div class="body">
-      <div class="eyebrow">労一（問4）</div>${row(k.y,k.ro)}
-      <div class="eyebrow">社一（問5）</div>${row(k.y,k.sha)}</div></details>`).join("")}
-
-    <section class="panel stack">
-      <h3>択一式も統計は毎年3問前後</h3>
-      <p>R8の択一式は、問1が若年者雇用実態調査、問2が雇用均等基本調査、問3が労働争議統計調査。択一は数年前の調査も使われ、数字そのものより「調査名と傾向」が問われる。</p>
-    </section>
+    </div></details>
   </div>`;
-  $("#goS").onclick=()=>startDrill(shuffle(allCards().filter(c=>c.prio==="S").map(c=>c.id)));
+  document.querySelectorAll(".kbtn").forEach(b=>b.onclick=()=>{session={kind:"kako",set:KSETS.find(k=>k.id===b.dataset.k),fill:{},active:"A",graded:false};render();window.scrollTo(0,0)});
+}
+function viewKakoSolve(){
+  const s=session,k=s.set,keys=Object.keys(k.blanks);
+  if(!keys.includes(s.active))s.active=keys[0];
+  const used=new Set(Object.values(s.fill));
+  const score=keys.filter(x=>s.fill[x]===k.blanks[x].ans).length;
+  const body=k.text.map((t,i)=>`<p class="passage kp"><span class="lbl">${i+1}</span>${esc(t).replace(/\[([A-E])\]/g,(_,x)=>{
+    const v=s.fill[x],b=k.blanks[x];
+    if(s.graded)return v===b.ans?`<span class="blank right">${x}：${esc(v)}</span>`:`<span class="blank wrong">${x}：${esc(v||"未解答")}<span class="fix">正：${esc(b.ans)}</span></span>`;
+    return `<button class="blank ${s.active===x?"active":""}" data-x="${x}">${x}${v?"："+esc(v):""}</button>`})}</p>`).join("");
+  let choices="";
+  if(!s.graded){
+    choices=k.fmt==="four"
+      ?`<div class="opts">${k.blanks[s.active].opts.map((w,i)=>`<button class="opt ${s.fill[s.active]===w?"right":""}" data-w="${esc(w)}"><b>${MARK[i]}</b> ${esc(w)}</button>`).join("")}</div>`
+      :`<div class="gogun">${k.words.map((w,i)=>`<button class="opt ${s.fill[s.active]===w?"right":used.has(w)?"used":""}" data-w="${esc(w)}"><b>${MARK[i]}</b>${esc(w)}</button>`).join("")}</div>`;
+  }
+  $("#main").innerHTML=`<div class="stack">
+    <div class="row" style="justify-content:space-between"><span class="eyebrow">${k.y}（${k.yr}年）選択式 ${k.subj}${k.src==="公表問題"?"":"｜"+k.src}</span><button class="btn ghost" id="quit">一覧へ</button></div>
+    <div class="panel stack">${body}</div>
+    ${s.graded?`<div class="panel stack"><div class="result"><span class="score">${score}/${keys.length}</span>${score>=3?'<span class="stamp ok">基準点クリア</span>':'<span class="stamp">基準点に届かず</span>'}</div>
+      ${k.rel&&k.rel.length?'<button class="btn block" id="rel">この問題の関連カードで復習</button>':""}
+      </div><div class="krow"><button class="btn" id="again">もう一度解く</button><button class="btn primary" id="nextk">次の過去問へ</button></div>`
+    :dock(`<div class="dock-h"><span>空欄 <b>${s.active}</b> に入る語</span><button class="btn primary" id="grade">採点する</button></div>${choices}`)}
+  </div>`;
+  $("#quit").onclick=()=>{session=null;render()};
+  document.querySelectorAll(".blank[data-x]").forEach(b=>b.onclick=()=>{s.active=b.dataset.x;viewKakoSolve()});
+  document.querySelectorAll(".opt[data-w]").forEach(b=>b.onclick=()=>{const w=b.dataset.w;
+    if(s.fill[s.active]===w)delete s.fill[s.active];else s.fill[s.active]=w;
+    const next=keys.find(x=>s.fill[x]===undefined);if(next&&s.fill[s.active]!==undefined)s.active=next;viewKakoSolve()});
+  if(s.graded){
+    const r=$("#rel");if(r)r.onclick=()=>startDrill(k.rel);
+    $("#nextk").onclick=()=>{const i=KSETS.indexOf(k);session={kind:"kako",set:KSETS[(i+1)%KSETS.length],fill:{},active:"A",graded:false};viewKakoSolve();window.scrollTo(0,0)};
+    $("#again").onclick=()=>{s.fill={};s.graded=false;s.active=keys[0];viewKakoSolve();window.scrollTo(0,0)};
+  }else $("#grade").onclick=()=>{s.graded=true;bump(keys.length);if(kbest[k.id]===undefined||score>kbest[k.id]){kbest[k.id]=score;S.set("kbest",kbest)}viewKakoSolve();window.scrollTo(0,0)};
+  fitDock();
+}
+
+/* 選択肢を画面下に固定する。問題文が隠れないよう、下の余白と選択中の空欄の位置を合わせる */
+function dock(html){return `<div class="dock" id="dock"><div class="dock-in">${html}</div></div>`}
+function fitDock(){
+  const d=$("#dock");$("#main").style.paddingBottom=d?(d.offsetHeight+12)+"px":"";
+  if(!d)return;
+  const a=document.querySelector(".blank.active");if(!a)return;
+  const r=a.getBoundingClientRect(),limit=d.getBoundingClientRect().top-12;
+  if(r.bottom>limit||r.top<60)window.scrollBy({top:r.top-Math.max(80,(limit-r.height)/2),behavior:"smooth"});
 }
 
 /* ===== 起動 ===== */
